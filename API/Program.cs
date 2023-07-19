@@ -40,4 +40,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+//Se creeaza contul de administrator
+CreateAdminUser.CreateAdmin(app).Wait();
+
 app.Run();
