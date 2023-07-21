@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { AccountService } from 'src/app/_services/account.service';
 
 @Component({
   selector: 'app-login',
@@ -10,10 +11,9 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class LoginComponent implements OnInit {
 
-  user: any | undefined = {};
   loginForm: FormGroup = new FormGroup({});
 
-  constructor(private http: HttpClient, private toastr: ToastrService) { }
+  constructor(private http: HttpClient, private toastr: ToastrService, private accountService: AccountService) { }
 
   ngOnInit(): void {
 
@@ -34,18 +34,7 @@ export class LoginComponent implements OnInit {
 
   login() {
 
-    //console.log(this.loginForm?.value);
-
-    return this.http.post('https://localhost:5001/api/users', this.loginForm.value).subscribe({
-
-      next: (user) => {
-        console.log(user);
-        this.toastr.success('User has been successfully authenticated!')
-      },
-      complete: () => console.log('Request completed'),
-      error: (error) => this.toastr.error(error.error)
-
-    });
+    this.accountService.login(this.loginForm.value);
 
   }
 

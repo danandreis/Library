@@ -148,3 +148,5 @@ E:\Udemy\Library\API\obj\Debug\net7.0\refint\API.dll
 E:\Udemy\Library\API\obj\Debug\net7.0\API.pdb
 E:\Udemy\Library\API\obj\Debug\net7.0\API.genruntimeconfig.cache
 E:\Udemy\Library\API\obj\Debug\net7.0\ref\API.dll
+E:\Udemy\Library\API\bin\Debug\net7.0\AutoMapper.dll
+E:\Udemy\Library\API\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

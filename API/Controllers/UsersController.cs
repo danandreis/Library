@@ -2,6 +2,7 @@ using System.Runtime;
 using API.Data;
 using API.Entities;
 using API.Entities.DTO;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,12 @@ namespace API.Controllers
         private readonly DataContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IMapper _mapper;
 
-        public UsersController(DataContext context, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public UsersController(DataContext context, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
+        IMapper mapper)
         {
+            _mapper = mapper;
             _signInManager = signInManager;
             _userManager = userManager;
             _context = context;
@@ -45,24 +49,36 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AppUser>> Login(UserDTO user)
+        public async Task<ActionResult<UserDTO>> Login(UserDTO userDTO)
         {
 
-            if (user == null) return BadRequest("Invalid user");
+            if (userDTO == null) return BadRequest("Invalid user");
 
-            var utilizator = await _userManager.FindByNameAsync(user.UserName);
+            var userDB = await _userManager.FindByNameAsync(userDTO.UserName);
 
-            if (utilizator == null) return BadRequest("Invalid login credentials");
+            if (userDB != null)
+            {
 
-            var passwordCheck = await _userManager.CheckPasswordAsync(utilizator, user.Password);
+                var passwordCheck = await _userManager.CheckPasswordAsync(userDB, userDTO.Password);
 
-            if (!passwordCheck) return BadRequest("Invalid login credentials");
+                if (passwordCheck)
+                {
 
-            var signInResult = await _signInManager.PasswordSignInAsync(utilizator, user.Password, false, false);
+                    var signInResult = await _signInManager.PasswordSignInAsync(userDB, userDTO.Password, false, false);
 
-            if (!signInResult.Succeeded) return BadRequest("Invalid login credentials");
+                    if (signInResult.Succeeded)
+                    {
 
-            return utilizator;
+                        userDTO = _mapper.Map<UserDTO>(userDB);
+                        userDTO.Role = _userManager.GetRolesAsync(userDB).Result.ToList();
+
+                        return Ok(userDTO);
+
+                    }
+                }
+            }
+
+            return BadRequest("Invalid login credentials");
 
         }
 
