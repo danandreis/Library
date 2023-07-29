@@ -1,6 +1,8 @@
 using System.Security.Principal;
 using API.Data;
+using API.Data.Services;
 using API.Entities;
+using API.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +33,9 @@ builder.Services.AddTransient<IPrincipal>(provider => provider.GetService<IHttpC
 
 builder.Services.AddCors();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<IUserService,UserService>();
+
+
 
 var app = builder.Build();
 

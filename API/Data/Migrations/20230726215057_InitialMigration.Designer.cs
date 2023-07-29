@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230726215057_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,9 +71,6 @@ namespace API.Data.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PersonalCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -214,32 +214,6 @@ namespace API.Data.Migrations
                     b.ToTable("BookLanguages");
                 });
 
-            modelBuilder.Entity("API.Entities.BookReservation", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BookId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("BookReservations");
-                });
-
             modelBuilder.Entity("API.Entities.BookType", b =>
                 {
                     b.Property<string>("Id")
@@ -258,8 +232,11 @@ namespace API.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -444,21 +421,6 @@ namespace API.Data.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("API.Entities.BookReservation", b =>
-                {
-                    b.HasOne("API.Entities.AppUser", "AppUser")
-                        .WithMany("BookReservations")
-                        .HasForeignKey("AppUserId");
-
-                    b.HasOne("API.Entities.Book", "Book")
-                        .WithMany("BookReservations")
-                        .HasForeignKey("BookId");
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Book");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -513,15 +475,11 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.AppUser", b =>
                 {
                     b.Navigation("BookBorrows");
-
-                    b.Navigation("BookReservations");
                 });
 
             modelBuilder.Entity("API.Entities.Book", b =>
                 {
                     b.Navigation("BookBorrows");
-
-                    b.Navigation("BookReservations");
                 });
 #pragma warning restore 612, 618
         }

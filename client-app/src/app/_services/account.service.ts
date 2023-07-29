@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { User } from '../_models/User';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, map } from 'rxjs';
+import { LoginUser, User } from '../_models/User';
+import { UserSubscription } from '../_models/UserSubscription';
 
 @Injectable({
   providedIn: 'root'
@@ -10,24 +10,105 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 export class AccountService {
 
   baseUrl = "https://localhost:5001/api/";
-  private userSource = new BehaviorSubject<User | null>(null);
+  private userSource = new BehaviorSubject<LoginUser | null>(null);
   user$ = this.userSource.asObservable();
+  rolesList: any = {};
 
-  constructor(private http: HttpClient, private toastr: ToastrService) { }
+  constructor(private http: HttpClient) { }
 
   login(user: User) {
 
-    return this.http.post('https://localhost:5001/api/users', user).subscribe({
+    return this.http.post<LoginUser>(this.baseUrl + 'users', user).pipe(
+
+      map((response) => {
+
+        if (response) {
+
+          localStorage.setItem('loginUserName', JSON.stringify(response));
+          this.userSource.next(response);
+        }
+
+      })
+    );
+
+  }
+
+  getLoginUser() {
+
+    var loginUserData = localStorage.getItem('loginUserName');
+
+    if (loginUserData != null) {
+
+      const loginUser: LoginUser = JSON.parse(loginUserData);
+      this.userSource.next(loginUser);
+
+    }
+
+  }
+
+  hasAdminRole(): boolean {
+
+    var isAdmin = false;
+
+    this.user$.subscribe({
 
       next: (user) => {
-        console.log(user);
-        this.toastr.success('User has been successfully authenticated!')
-      },
-      complete: () => console.log('Request completed'),
-      error: (error:any) => this.toastr.error(error.error)
 
-    });
+        if (user)
+          isAdmin = user?.roles.includes('Admin')
 
+      }
 
+    })
+
+    return isAdmin
+  }
+
+  hasUserRole(): boolean {
+
+    var isUser = false;
+
+    this.user$.subscribe({
+      next: (user) => {
+
+        if (user)
+          isUser = user.roles.includes('user');
+      }
+
+    })
+
+    return isUser;
+  }
+
+  hasEmployeeRole(): boolean {
+
+    var isEmployee = false;
+
+    this.user$.subscribe({
+
+      next: (user) => {
+
+        if (user)
+          isEmployee = user.roles.includes('employee')
+      }
+    })
+
+    return isEmployee;
+
+  }
+
+  getAvailableSubscription() {
+
+    return this.http.get<UserSubscription[]>(this.baseUrl + 'users/subscriptions').pipe(
+
+      map(subscriptions => { return subscriptions })
+
+    );
+
+  }
+
+  logout() {
+    localStorage.removeItem('loginUserName');
+    this.userSource.next(null);
   }
 }

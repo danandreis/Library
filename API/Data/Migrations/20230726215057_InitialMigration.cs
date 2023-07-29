@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -141,6 +141,7 @@ namespace API.Data.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdCard = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstLogin = table.Column<int>(type: "int", nullable: false),
                     SubscriptionId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -253,7 +254,7 @@ namespace API.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookLeases",
+                name: "BookBorrows",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -265,14 +266,14 @@ namespace API.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookLeases", x => x.Id);
+                    table.PrimaryKey("PK_BookBorrows", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BookLeases_AspNetUsers_AppUserId",
+                        name: "FK_BookBorrows_AspNetUsers_AppUserId",
                         column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_BookLeases_Books_BookId",
+                        name: "FK_BookBorrows_Books_BookId",
                         column: x => x.BookId,
                         principalTable: "Books",
                         principalColumn: "Id");
@@ -323,13 +324,13 @@ namespace API.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookLeases_AppUserId",
-                table: "BookLeases",
+                name: "IX_BookBorrows_AppUserId",
+                table: "BookBorrows",
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookLeases_BookId",
-                table: "BookLeases",
+                name: "IX_BookBorrows_BookId",
+                table: "BookBorrows",
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
@@ -367,7 +368,7 @@ namespace API.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BookLeases");
+                name: "BookBorrows");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

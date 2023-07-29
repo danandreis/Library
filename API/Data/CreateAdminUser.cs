@@ -36,6 +36,7 @@ namespace API.Data
                         UserName = "admin",
                         EmailConfirmed = true,
                         RegistrationDate = DateTime.Now,
+                        FirstLogin = 0,
                         IdCard = null
 
                     };

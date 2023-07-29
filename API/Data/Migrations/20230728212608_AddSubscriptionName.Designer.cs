@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230709194008_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230728212608_AddSubscriptionName")]
+    partial class AddSubscriptionName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,6 +46,9 @@ namespace API.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<int>("FirstLogin")
+                        .HasColumnType("int");
 
                     b.Property<string>("IdCard")
                         .HasColumnType("nvarchar(max)");
@@ -156,6 +159,35 @@ namespace API.Data.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("API.Entities.BookBorrow", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BookId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("DelayTime")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BookBorrows");
+                });
+
             modelBuilder.Entity("API.Entities.BookDomain", b =>
                 {
                     b.Property<string>("Id")
@@ -182,7 +214,7 @@ namespace API.Data.Migrations
                     b.ToTable("BookLanguages");
                 });
 
-            modelBuilder.Entity("API.Entities.BookLease", b =>
+            modelBuilder.Entity("API.Entities.BookReservation", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -192,9 +224,6 @@ namespace API.Data.Migrations
 
                     b.Property<string>("BookId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("DelayTime")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -208,7 +237,7 @@ namespace API.Data.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.ToTable("BookLeases");
+                    b.ToTable("BookReservations");
                 });
 
             modelBuilder.Entity("API.Entities.BookType", b =>
@@ -231,6 +260,9 @@ namespace API.Data.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -403,14 +435,29 @@ namespace API.Data.Migrations
                     b.Navigation("BookType");
                 });
 
-            modelBuilder.Entity("API.Entities.BookLease", b =>
+            modelBuilder.Entity("API.Entities.BookBorrow", b =>
                 {
                     b.HasOne("API.Entities.AppUser", "AppUser")
-                        .WithMany("BookLeases")
+                        .WithMany("BookBorrows")
                         .HasForeignKey("AppUserId");
 
                     b.HasOne("API.Entities.Book", "Book")
-                        .WithMany("BookLeases")
+                        .WithMany("BookBorrows")
+                        .HasForeignKey("BookId");
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("API.Entities.BookReservation", b =>
+                {
+                    b.HasOne("API.Entities.AppUser", "AppUser")
+                        .WithMany("BookReservations")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("API.Entities.Book", "Book")
+                        .WithMany("BookReservations")
                         .HasForeignKey("BookId");
 
                     b.Navigation("AppUser");
@@ -471,12 +518,16 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.AppUser", b =>
                 {
-                    b.Navigation("BookLeases");
+                    b.Navigation("BookBorrows");
+
+                    b.Navigation("BookReservations");
                 });
 
             modelBuilder.Entity("API.Entities.Book", b =>
                 {
-                    b.Navigation("BookLeases");
+                    b.Navigation("BookBorrows");
+
+                    b.Navigation("BookReservations");
                 });
 #pragma warning restore 612, 618
         }

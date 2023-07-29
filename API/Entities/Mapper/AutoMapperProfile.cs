@@ -10,6 +10,7 @@ namespace API.Entities.Mapper
         {
 
             CreateMap<AppUser, UserDTO>();
+            CreateMap<AppUser, LoginUserDTO>();
 
         }
 

@@ -1,1 +1,151 @@
-<p>registration works!</p>
+<div class="row">
+    <div class="col-md-8 offset-2 text-center">
+        <h3 class="fw-bold text-info">User registration form</h3>
+    </div>
+    <form [formGroup]="userRegistrationForm" autocomplete="off" *ngIf="showContent">
+        <div class="col-md-8 offset-2">
+            <div class="row">
+                <div class="col-md-4 mt-3">
+                    <label for="name">Name</label>
+                    <input type="text" id='name' class="form-control"
+                        (change)="setUserName(userRegistrationForm.get('name')?.value)"
+                        [class.is-invalid]="userRegistrationForm.get('name')?.errors && userRegistrationForm.get('name')?.touched"
+                        formControlName="name" placeholder="User name" />
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('name')?.hasError('pattern')">
+                        Please enter a valid user name (eg.: John Done)</div>
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('name')?.hasError('required')">
+                        Please enter a name</div>
+                </div>
+
+                <div class="col-md-4 mt-3">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control bg-light" id="username" name="userName"
+                        formControlName="userName" />
+                </div>
+
+                <div class="col-md-4 mt-3">
+                    <label for="code">Personal Code</label>
+                    <input type="text" id='code' class="form-control"
+                        [class.is-invalid]="userRegistrationForm.get('personalCode')?.errors && userRegistrationForm.get('personalCode')?.touched"
+                        formControlName="personalCode" placeholder="Personal Code" />
+                    <div class="invalid-feedback"
+                        *ngIf="userRegistrationForm.get('personalCode')?.hasError('required')">
+                        Please enter personal code</div>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <label for="address">Address</label>
+                    <input type="twxt" id="address" class="form-control"
+                        [class.is-invalid]="userRegistrationForm.get('address')?.errors && userRegistrationForm.get('address')?.touched"
+                        formControlName="address" placeholder="Address" />
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('address')?.hasError('required')">
+                        Enter your address</div>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <label for="idcard">ID card</label>
+                    <input type="text" id="idcard" class="form-control"
+                        [class.is-invalid]="userRegistrationForm.get('idCard')?.errors && userRegistrationForm.get('idCard')?.touched"
+                        formControlName="idCard" placeholder="ID card" />
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('idCard')?.hasError('required')">
+                        Enter an ID card
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 mt-3">
+                    <label for="email">E-mail</label>
+                    <input type="text" id="email" class="form-control"
+                        [class.is-invalid]="userRegistrationForm.get('email')?.errors && userRegistrationForm.get('email')?.touched"
+                        formControlName="email" placeholder="E-mail" />
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('email')?.hasError('required')">
+                        Enter an email address
+                    </div>
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('email')?.hasError('email')">
+                        Enter an valid email address
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <label id="phone">Mobile</label>
+                    <input type="text" id="phone" class="form-control"
+                        [class.is-invalid]="userRegistrationForm.get('phoneNumber')?.errors && userRegistrationForm.get('phoneNumber')?.touched"
+                        formControlName="phoneNumber" placeholder="Mobile phone" />
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('phoneNumber')?.hasError('required')">
+                        Enter a phone number
+                    </div>
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('phoneNumber')?.hasError('pattern')">
+                        Enter a valid phone number (07xxxxxxxxxx)
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <label for="subscription" class="me-3">Subscription</label>
+                    <select id="subscription">
+                        <option *ngFor="let subscription of subscriptions" value={{subscription.id}}
+                            [selected]="subscription.type=='Monthly'">
+                            {{subscription.type}}
+                        </option>
+                    </select>
+
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <label for="roles" class="me-3">Roles</label>
+                    <select id="roles">
+                        <option id="subscription" *ngFor="let role of availableRoles" value={{role}}
+                            [selected]="role =='User'">
+                            {{role}}
+
+                        </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('roles')?.hasError('required')">
+                        Select a valid role
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <label id="password">Password</label>
+                    <input type="password" id="password" class="form-control"
+                        [class.is-invalid]="userRegistrationForm.get('password')?.errors && userRegistrationForm.get('password')?.touched"
+                        formControlName="password" placeholder="Password" />
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('password')?.hasError('required')">
+                        Password is required
+                    </div>
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('password')?.hasError('pattern')">
+                        Password is invalid! <br>Password must contain at least 6 characters, one capital
+                        letter, one digit
+                        and one special character ()
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <label id="confirmation">Password confirmation</label>
+                    <input type="password" id="confirmation" class="form-control"
+                        [class.is-invalid]="userRegistrationForm.get('confirmPassword')?.errors && userRegistrationForm.get('confirmPassword')?.touched"
+                        formControlName="confirmPassword" />
+                    <div class="invalid-feedback"
+                        *ngIf="userRegistrationForm.get('confirmPassword')?.hasError('required')">
+                        Enter the confirmation password
+                    </div>
+                    <div class="invalid-feedback"
+                        *ngIf="userRegistrationForm.get('confirmPassword')?.hasError('notMatching')">
+                        Passwords did not match!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 offset-4">
+            <div class="row">
+                <div class="col-md-6 mt-3">
+                    <input class="form-control btn btn-outline-success" type="submit" name="addUser" value="Register"
+                        [disabled]="userRegistrationForm.invalid" />
+                </div>
+                <div class="col-md-6  mt-3">
+                    <input class="form-control btn btn-outline-danger" type="submit" name="addUser" value="Cancel" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -30,8 +30,10 @@ namespace API.Entities
         public string BookTypeId { get; set; }
         public BookType BookType { get; set; }
 
-        //Relation with BookLease
-        public List<BookLease> BookLeases { get; set; }
+        //Relation with BookBorrows
+        public List<BookBorrow> BookBorrows { get; set; }
+
+        public List<BookReservation> BookReservations { get; set; }
 
     }
 }

@@ -14,11 +14,15 @@ namespace API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<BookLease>().HasOne(b => b.Book).
-                WithMany(bl => bl.BookLeases).HasForeignKey(b => b.BookId);
+            modelBuilder.Entity<BookBorrow>().HasOne(b => b.Book).
+                WithMany(bl => bl.BookBorrows).HasForeignKey(b => b.BookId);
+            modelBuilder.Entity<BookBorrow>().HasOne(u => u.AppUser).
+                WithMany(bl => bl.BookBorrows).HasForeignKey(u => u.AppUserId);
 
-            modelBuilder.Entity<BookLease>().HasOne(u => u.AppUser).
-                WithMany(bl => bl.BookLeases).HasForeignKey(u => u.AppUserId);
+            modelBuilder.Entity<BookReservation>().HasOne(b => b.Book).
+                WithMany(br => br.BookReservations).HasForeignKey(b => b.BookId);
+            modelBuilder.Entity<BookReservation>().HasOne(b => b.AppUser).
+                WithMany(br => br.BookReservations).HasForeignKey(b => b.AppUserId);
 
             base.OnModelCreating(modelBuilder);
 
@@ -28,8 +32,9 @@ namespace API.Data
         public DbSet<BookDomain> BookDomains { get; set; }
         public DbSet<BookLanguage> BookLanguages { get; set; }
         public DbSet<BookType> BookTypes { get; set; }
-        public DbSet<BookLease> BookLeases { get; set; }
+        public DbSet<BookBorrow> BookBorrows { get; set; }
         public DbSet<Book> Books { get; set; }
+        public DbSet<BookReservation> BookReservations { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
 
 

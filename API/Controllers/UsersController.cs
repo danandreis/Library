@@ -1,84 +1,66 @@
-using System.Runtime;
-using API.Data;
 using API.Entities;
 using API.Entities.DTO;
-using AutoMapper;
+using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
 
     public class UsersController : BaseAPIController
     {
-        private readonly DataContext _context;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public UsersController(DataContext context, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-        IMapper mapper)
+        public UsersController(IUserService userService)
         {
-            _mapper = mapper;
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _context = context;
+            _userService = userService;
 
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<IEnumerable<UserDTO>> GetUsers()
         {
 
-            var users = await _context.Users.ToListAsync();
-
-            return users;
+            var usersDB = await _userService.GetAllUsers();
+            return usersDB;
 
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        [HttpGet("subscriptions")]
+        public async Task<IEnumerable<Subscription>> GetSubscriptions()
         {
 
-            var user = await _context.Users.FindAsync(id);
+            return await _userService.GetSubscriptions();
 
-            return user;
+        }
+
+        [HttpGet("roles")]
+        public async Task<IEnumerable<IdentityRole>> GetRoles()
+        {
+
+            return await _userService.GetRoles();
+            
+        }
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AppUser>> GetUser(string id)
+        {
+
+            return await _userService.GetUser(id);
 
 
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserDTO>> Login(UserDTO userDTO)
+        public async Task<ActionResult<LoginUserDTO>> Login(LoginUserDTO loginUserDTO)
         {
 
-            if (userDTO == null) return BadRequest("Invalid user");
+            var loginUser = await _userService.LoginUser(loginUserDTO);
 
-            var userDB = await _userManager.FindByNameAsync(userDTO.UserName);
+            if (loginUser == null) return BadRequest("Invalid login credentials");
 
-            if (userDB != null)
-            {
-
-                var passwordCheck = await _userManager.CheckPasswordAsync(userDB, userDTO.Password);
-
-                if (passwordCheck)
-                {
-
-                    var signInResult = await _signInManager.PasswordSignInAsync(userDB, userDTO.Password, false, false);
-
-                    if (signInResult.Succeeded)
-                    {
-
-                        userDTO = _mapper.Map<UserDTO>(userDB);
-                        userDTO.Role = _userManager.GetRolesAsync(userDB).Result.ToList();
-
-                        return Ok(userDTO);
-
-                    }
-                }
-            }
-
-            return BadRequest("Invalid login credentials");
+            return Ok(loginUser);
 
         }
 
