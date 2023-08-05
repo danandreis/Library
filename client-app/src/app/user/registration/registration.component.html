@@ -2,7 +2,7 @@
     <div class="col-md-8 offset-2 text-center">
         <h3 class="fw-bold text-info">User registration form</h3>
     </div>
-    <form [formGroup]="userRegistrationForm" autocomplete="off" *ngIf="showContent">
+    <form [formGroup]="userRegistrationForm" autocomplete="off" *ngIf="showContent" (ngSubmit)="registerNewUser()">
         <div class="col-md-8 offset-2">
             <div class="row">
                 <div class="col-md-4 mt-3">
@@ -10,7 +10,7 @@
                     <input type="text" id='name' class="form-control"
                         (change)="setUserName(userRegistrationForm.get('name')?.value)"
                         [class.is-invalid]="userRegistrationForm.get('name')?.errors && userRegistrationForm.get('name')?.touched"
-                        formControlName="name" placeholder="User name" />
+                        formControlName="name" placeholder="Name" />
                     <div class="invalid-feedback" *ngIf="userRegistrationForm.get('name')?.hasError('pattern')">
                         Please enter a valid user name (eg.: John Done)</div>
                     <div class="invalid-feedback" *ngIf="userRegistrationForm.get('name')?.hasError('required')">
@@ -18,9 +18,13 @@
                 </div>
 
                 <div class="col-md-4 mt-3">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control bg-light" id="username" name="userName"
+                    <label for="userName">Username</label>
+                    <input type="text" class="form-control" id="userName"
+                        [class.is-invalid]="userRegistrationForm.get('userName')?.errors && userRegistrationForm.get('userName')?.touched"
                         formControlName="userName" />
+                    <div class="invalid-feedback" *ngIf="userRegistrationForm.get('userName')?.hasError('isUserName')">
+                        This usermane is already registered
+                    </div>
                 </div>
 
                 <div class="col-md-4 mt-3">
@@ -35,7 +39,7 @@
 
                 <div class="col-md-6 mt-3">
                     <label for="address">Address</label>
-                    <input type="twxt" id="address" class="form-control"
+                    <input type="text" id="address" class="form-control"
                         [class.is-invalid]="userRegistrationForm.get('address')?.errors && userRegistrationForm.get('address')?.touched"
                         formControlName="address" placeholder="Address" />
                     <div class="invalid-feedback" *ngIf="userRegistrationForm.get('address')?.hasError('required')">
@@ -80,27 +84,26 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="subscription" class="me-3">Subscription</label>
-                    <select id="subscription">
-                        <option *ngFor="let subscription of subscriptions" value={{subscription.id}}
-                            [selected]="subscription.type=='Monthly'">
-                            {{subscription.type}}
-                        </option>
-                    </select>
-
-                </div>
-
-                <div class="col-md-6 mt-3">
                     <label for="roles" class="me-3">Roles</label>
-                    <select id="roles">
-                        <option id="subscription" *ngFor="let role of availableRoles" value={{role}}
-                            [selected]="role =='User'">
+                    <select formControlName="role" id="roles" id="subscription" (change)="selectRole($event)">
+                        <option *ngFor="let role of availableRoles" [ngValue]="role" [selected]="role =='User'">
                             {{role}}
 
                         </option>
                     </select>
                     <div class="invalid-feedback" *ngIf="userRegistrationForm.get('roles')?.hasError('required')">
                         Select a valid role
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <div *ngIf="isRoleUser">
+                        <label for="subscription" class="me-3">Subscription</label>
+                        <select formControlName="subscriptionId" id="subscription">
+                            <option *ngFor="let subscription of subscriptions" [ngValue]="subscription.id">
+                                {{subscription.type}}
+                            </option>
+                        </select>
                     </div>
                 </div>
 
@@ -143,7 +146,8 @@
                         [disabled]="userRegistrationForm.invalid" />
                 </div>
                 <div class="col-md-6  mt-3">
-                    <input class="form-control btn btn-outline-danger" type="submit" name="addUser" value="Cancel" />
+                    <input class="form-control btn btn-outline-danger" type="button" name="addUser" value="Cancel"
+                        (click)="cancelRegistration()" />
                 </div>
             </div>
         </div>

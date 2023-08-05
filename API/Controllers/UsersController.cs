@@ -3,6 +3,7 @@ using API.Entities.DTO;
 using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace API.Controllers
 {
@@ -39,16 +40,19 @@ namespace API.Controllers
         {
 
             return await _userService.GetRoles();
-            
+
         }
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(string id)
+        public async Task<ActionResult<UserDTO>> GetUser(string id)
         {
 
-            return await _userService.GetUser(id);
+            var user = await _userService.GetUser(id);
 
+            if (user == null) return BadRequest("There is no user with this ID");
+
+            return user;
 
         }
 
@@ -62,6 +66,44 @@ namespace API.Controllers
 
             return Ok(loginUser);
 
+        }
+
+        [HttpPost("registration")]
+        public async Task<ActionResult<AppUser>> AddUser(RegisterUserDTO registerUserDTO)
+        {
+
+            var user = await _userService.AddUser(registerUserDTO);
+
+            if (user == null)
+                return BadRequest("The username " + registerUserDTO.UserName.ToUpper() + " is already registered in database!");
+
+            return Ok(user);
+
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<AppUser>> UpdateUser(UserDTO userDTO)
+        {
+
+            if (userDTO == null) return BadRequest("New user data is invalid!");
+
+            if (await _userService.UpdateUser(userDTO) == null)
+                return BadRequest("There was an error when updating user data! ");
+
+            return Ok(userDTO);
+
+        }
+
+        [HttpPut("resetPassword")]
+        public async Task<ActionResult<AppUser>> ResetPassword(NewPasswordDTO newPasswordDTO)
+        {
+
+            var result = await _userService.ResetPassword(newPasswordDTO);
+
+            if (result == null)
+                return BadRequest("There is no user with this ID in database");
+
+            return Ok(result);
         }
 
     }

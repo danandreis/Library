@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { User } from 'src/app/_models/User';
 import { UserSubscription } from 'src/app/_models/UserSubscription';
 import { AccountService } from 'src/app/_services/account.service';
+import { AdminService } from 'src/app/_services/admin.service';
+import { UserService } from 'src/app/_services/user.service';
 
 @Component({
   selector: 'app-registration',
@@ -17,42 +22,40 @@ export class RegistrationComponent implements OnInit {
     'User',
     'Employee'
   ]
+
+  isRoleUser: boolean = true;
   public showContent: boolean = false;
+  newUser: User | null = null;
+  isUserNameRegistered: boolean = false;
 
-
-  //user: User;
-
-  constructor(private accountService: AccountService) { }
+  constructor(private accountService: AccountService, private userService: UserService, private adminService: AdminService, private router: Router,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
 
-    setTimeout(() => this.showContent = true, 300)
+    setTimeout(() => this.showContent = true, 500)
     this.getSubscriptions();
+    this.adminService.getUsers()
 
   }
 
   initializeRegistrationForm() {
 
-
-    var defaultSubscriptionId = this.subscriptions.filter(s => s.type == 'Monthly').at(0)?.id
-
     this.userRegistrationForm = new FormGroup({
 
       name: new FormControl('', [Validators.required, Validators.pattern("^[A-Z][a-z]{2,}(\\s[A-Z][a-z]{2,})+$")]),
-      userName: new FormControl({ value: '', disabled: true }, Validators.required),
+      userName: new FormControl('', [Validators.required, this.verifyUserName()]),
       address: new FormControl('', Validators.required),
       idCard: new FormControl('', Validators.required),
-      subscriptionId: new FormControl(defaultSubscriptionId, Validators.required),
+      subscriptionId: new FormControl(this.subscriptions.at(0)?.id, Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
       phoneNumber: new FormControl('', [Validators.required, Validators.pattern("^(07)[0-9]{8}$")]),
       personalCode: new FormControl('', Validators.required),
-      roles: new FormControl('User', Validators.required),
+      role: new FormControl('User', Validators.required),
       password: new FormControl('', [Validators.required, Validators.pattern("^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*\\[\\.|\\_|!|@|#|$|%|^|&|\\*|-\\[)(.{6,})$")]),
       confirmPassword: new FormControl('', [Validators.required, this.matchPassword('password')])
 
     });
-
-    console.log(this.userRegistrationForm.value)
 
     this.userRegistrationForm.controls['password'].valueChanges.subscribe({
 
@@ -66,6 +69,16 @@ export class RegistrationComponent implements OnInit {
     return (control: AbstractControl) => {
 
       return control.value === control.parent?.get(matchTo)?.value ? null : { notMatching: true }
+
+    }
+  }
+
+  verifyUserName(): ValidatorFn {
+
+    return (control: AbstractControl) => {
+
+      this.checkUserName(control.value);
+      return !this.isUserNameRegistered ? null : { isUserName: true }
 
     }
   }
@@ -85,9 +98,67 @@ export class RegistrationComponent implements OnInit {
   setUserName(name: string) {
 
     var username_components = name.toLowerCase().split(' ');
+    var formUserName = username_components[0] + "." + username_components[1]; //generate username from current user
 
-    this.userRegistrationForm.get('userName')!.setValue(username_components[0] + "." + username_components[1]);
+    this.isUserNameRegistered = false;
+
+    this.userRegistrationForm.get('userName')!.setValue(formUserName);
+
+    this.adminService.usersList$.subscribe({
+
+      next: (list) => {
+
+        this.isUserNameRegistered = list.filter(e => e.userName === formUserName).length != 0 ? true : false
+
+      }
+    })
+
+
   }
 
+  checkUserName(value: string) {
+
+    //Check if username is alredy registered
+    this.adminService.usersList$.subscribe({
+
+      next: (list) => {
+
+        this.isUserNameRegistered = list.filter(e => e.userName === value).length != 0 ? true : false
+
+      }
+    })
+  }
+
+  selectRole(event: any) {
+
+    this.isRoleUser = (event.target.value.split(":")[1].trim() !== 'User') ? false : true;
+
+  }
+
+  cancelRegistration() {
+
+    this.router.navigateByUrl('/admin/users-list')
+  }
+
+  registerNewUser() {
+
+    this.newUser = this.userRegistrationForm.value;
+    this.newUser!.registrationDate = new Date();
+    this.newUser!.firstLogin = 1;
+    if (!this.isRoleUser) this.newUser!.subscriptionId = null
+
+    this.userService.addNewUser(this.newUser!).subscribe({
+
+      next: () => {
+
+        this.toastr.success('The user has been successfully registered');
+        this.router.navigateByUrl('/admin/users-list')
+      },
+
+      error: (error) => this.toastr.error(error.error)
+
+    })
+
+  }
 
 }

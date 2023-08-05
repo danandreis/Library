@@ -18,16 +18,13 @@
                             <li class="nav-item">
                                 <a class="nav-link" routerLink="/books/reservations">Reserved books </a>
                             </li>
-                            <li role="nav-item">
-                                <a class="nav-link" href="/user/registration">New user</a>
-                            </li>
                         </ng-container>
                         <ng-container *ngIf="accountService.hasUserRole()">
                             <li class="nav-item">
-                                <a class="nav-link" href="/user/myBooks?type=borrowed">Borrowed books</a>
+                                <a class="nav-link" routerLink="/books/list">Books list</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" routerLink="/books/list">Books list</a>
+                                <a class="nav-link" href="/user/myBooks?type=borrowed">Borrowed books</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/user/myBooks?type=reserved">Reserved books</a>
@@ -48,7 +45,7 @@
                 <div class="btn-group" dropdown>
                     <button id="button-basic" dropdownToggle type="button" class="btn btn-success dropdown-toggle"
                         aria-controls="dropdown-basic">
-                        Welcome {{user.userName}}
+                        Welcome <b>{{user.name}}</b>
                         <span class="caret"></span>
                     </button>
                     <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu"

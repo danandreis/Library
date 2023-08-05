@@ -42,14 +42,28 @@ export class LoginComponent implements OnInit {
       next: () => {
 
         this.toastr.success('You have been successfully authenticated');
-        this.router.navigateByUrl('/admin/users-list')
+
+        this.accountService.user$.subscribe({
+          next: (user) => {
+
+            if (user?.role == 'Admin') this.router.navigateByUrl('/admin/users-list');
+            if (user?.role == 'User') this.router.navigateByUrl('/user/myBooks');
+            if (user?.role == 'Employee') this.router.navigateByUrl('/books/list');
+          }
+        })
+
       },
 
-      error: (error) => this.toastr.error(error.error)
+      error: (error) => {
+
+        this.toastr.error(error.error);
+        this.initializeForm();
+
+      }
 
     });
 
   }
-  
+
 
 }

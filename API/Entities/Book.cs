@@ -16,6 +16,8 @@ namespace API.Entities
         public int Pages { get; set; }
         public string ISBN { get; set; }
         public int Copies { get; set; }
+        public string Description { get; set; }
+        public decimal Rating { get; set; }
         public string PictureLink { get; set; }
 
         //Relatia cu Domeniu
@@ -34,6 +36,7 @@ namespace API.Entities
         public List<BookBorrow> BookBorrows { get; set; }
 
         public List<BookReservation> BookReservations { get; set; }
+        public List<BooksRating> BooksRatings { get; set; }
 
     }
 }

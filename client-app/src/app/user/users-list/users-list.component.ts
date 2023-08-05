@@ -1,6 +1,8 @@
-import { HttpContext } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { map, take } from 'rxjs';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { NewPassord } from 'src/app/_models/NewPassword';
 import { User } from 'src/app/_models/User';
 import { AdminService } from 'src/app/_services/admin.service';
 
@@ -12,25 +14,35 @@ import { AdminService } from 'src/app/_services/admin.service';
 export class UsersListComponent implements OnInit {
 
   users: User[] = [];
-  searchValue: string = 'Admin';
+  userRole: string = 'All'
+  valueToSearch: string = ''
 
-  constructor(public adminService: AdminService) { }
+  constructor(private http: HttpClient, public adminService: AdminService, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit(): void {
 
     this.adminService.getUsers()
 
-    this.getUsersList('');
+    this.getUsersList('', this.userRole);
 
   }
 
   searchByValue(event: any) {
 
-    this.getUsersList(event.target.value);
+    this.valueToSearch = event.target.value
+    this.getUsersList(this.valueToSearch, this.userRole);
 
   }
 
-  getUsersList(value: string) {
+  selectRole(event: any) {
+
+    this.userRole = event.target.value;
+    this.getUsersList(this.valueToSearch, this.userRole);
+
+  }
+
+  getUsersList(value: string, role: string) {
+
 
     this.adminService.usersList$.subscribe(
       {
@@ -41,21 +53,21 @@ export class UsersListComponent implements OnInit {
 
             this.users = [];
 
-            list.forEach(element => {
+            list.forEach(user => {
 
               var regEx = new RegExp(value, 'i');
 
-              var result = regEx.test(element.name);
+              var result = regEx.test(user.name);
 
-              if (result)
-                this.users.push(element);
+              if (result && (role === 'All' || user.role == role))
+                this.users.push(user);
 
             })
 
           }
           else {
 
-            this.users = list
+            this.users = (role !== 'All') ? list.filter(u => u.role == role) : list
 
           }
 
@@ -68,4 +80,29 @@ export class UsersListComponent implements OnInit {
     )
 
   }
+
+  editUser(id: string) {
+
+    this.router.navigate(['user/details/', id])
+  }
+
+
+  resetPassword(id: string) {
+
+    var newPassword: NewPassord = {} as NewPassord;
+
+    newPassword.userId = id;
+    newPassword.password = 'Password_1234'
+    newPassword.changedByUser = false;
+
+    this.adminService.resetPassword(newPassword).subscribe({
+
+      next: () => this.toastr.success("The password was successfully reseted!"),
+      error: (error) => this.toastr.error(error.error)
+    })
+
+
+  }
+
 }
+

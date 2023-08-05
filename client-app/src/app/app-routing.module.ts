@@ -12,6 +12,7 @@ import { AdminGuard } from './_guards/admin.guard';
 import { BorrowsComponent } from './books/borrows/borrows.component';
 import { ReservationsComponent } from './books/reservations/reservations.component';
 import { ListBookComponent } from './books/list-book/list-book.component';
+import { ResetPasswordComponent } from './user/reset-password/reset-password.component';
 
 const routes: Routes = [
 
@@ -24,15 +25,16 @@ const routes: Routes = [
 
       { path: 'books/new', component: NewBookComponent },
       { path: 'books/edit/:id', component: EditBookComponent },
-      { path: 'books/borrowed', component: BorrowsComponent },             //Borrowed books component
-      { path: 'books/reservations', component: ReservationsComponent },    //Reserved books component
-      { path: 'books/list', component: ListBookComponent },                //List of all books available
+      { path: 'books/borrowed', component: BorrowsComponent },                  //Borrowed books component
+      { path: 'books/reservations', component: ReservationsComponent },         //Reserved books component
+      { path: 'books/list', component: ListBookComponent },                     //List of all books available
 
       { path: 'user/myBooks', component: UserBooksComponent },            //Borrowed or reserved books for specified client
-      { path: 'user/details/:id', component: DetailsComponent },          // Details user acoount info
-      { path: 'user/registration', component: RegistrationComponent },    //Registration of a new user
+      { path: 'user/details/:id', component: DetailsComponent },                    // Details user acoount info
+      { path: 'user/reset-password/:id', component: ResetPasswordComponent },        //Reset of user password
 
-      { path: 'admin/users-list', component: UsersListComponent, canActivate: [AdminGuard] }
+      { path: 'admin/users-list', component: UsersListComponent, canActivate: [AdminGuard] },
+      { path: 'user/registration', component: RegistrationComponent, canActivate: [AdminGuard] } //Registration of a new user 
 
     ]
   }

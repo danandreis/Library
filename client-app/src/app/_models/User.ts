@@ -1,25 +1,30 @@
+import { UserSubscription } from "./UserSubscription"
+
 export interface User {
 
+    id: string ,
     name: string,
     userName: string,
     address: string,
-    personalCode:string,
+    personalCode: string,
     registrationDate: Date,
     idCard: string,
-    subscriptionId: number,
+    subscriptionId: string | null,
+    subscription: UserSubscription,
     email: string,
     phoneNumber: string,
     firstLogin: number,
     password: string,
-    roles: string[]
+    role: string
 
 }
 
 export interface LoginUser {
 
 
+    id: string,
     name: string,
     userName: string,
-    roles: string[]
+    role: string
 
 }

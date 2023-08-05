@@ -12,13 +12,14 @@ namespace API.Services
     {
 
         Task<IEnumerable<UserDTO>> GetAllUsers();
-        Task<AppUser> GetUser(string id);
-        void AddUser(AppUser appUser);
+        Task<UserDTO> GetUser(string id);
+        Task<AppUser> AddUser(RegisterUserDTO registerUserDTO);
         Task DeleteUser(string id);
-        Task<AppUser> UpdateUser(AppUser appUser);
+        Task<AppUser> UpdateUser(UserDTO userDTO);
         Task<LoginUserDTO> LoginUser(LoginUserDTO loginUserDTO);
         Task<IEnumerable<Subscription>> GetSubscriptions();
         Task<IEnumerable<IdentityRole>> GetRoles();
+        Task<AppUser> ResetPassword(NewPasswordDTO newPasswordDTO);
 
     }
 }

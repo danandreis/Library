@@ -1,7 +1,6 @@
 using API.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace API.Data
 {
@@ -24,6 +23,11 @@ namespace API.Data
             modelBuilder.Entity<BookReservation>().HasOne(b => b.AppUser).
                 WithMany(br => br.BookReservations).HasForeignKey(b => b.AppUserId);
 
+            modelBuilder.Entity<BooksRating>().HasOne(b => b.Book).
+                 WithMany(br => br.BooksRatings).HasForeignKey(b => b.BookId);
+            modelBuilder.Entity<BooksRating>().HasOne(u => u.AppUser).
+                WithMany(br => br.BooksRatings).HasForeignKey(u => u.AppUserId);
+
             base.OnModelCreating(modelBuilder);
 
         }
@@ -36,6 +40,7 @@ namespace API.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<BookReservation> BookReservations { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<BooksRating> booksRatings { get; set; }
 
 
     }

@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230801210032_AddBookDescriptionRating")]
+    partial class AddBookDescriptionRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,35 +262,6 @@ namespace API.Data.Migrations
                     b.ToTable("BookTypes");
                 });
 
-            modelBuilder.Entity("API.Entities.BooksRating", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BookId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PositiveVotes")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Votes")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("booksRatings");
-                });
-
             modelBuilder.Entity("API.Entities.Subscription", b =>
                 {
                     b.Property<string>("Id")
@@ -494,21 +468,6 @@ namespace API.Data.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("API.Entities.BooksRating", b =>
-                {
-                    b.HasOne("API.Entities.AppUser", "AppUser")
-                        .WithMany("BooksRatings")
-                        .HasForeignKey("AppUserId");
-
-                    b.HasOne("API.Entities.Book", "Book")
-                        .WithMany("BooksRatings")
-                        .HasForeignKey("BookId");
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Book");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -565,8 +524,6 @@ namespace API.Data.Migrations
                     b.Navigation("BookBorrows");
 
                     b.Navigation("BookReservations");
-
-                    b.Navigation("BooksRatings");
                 });
 
             modelBuilder.Entity("API.Entities.Book", b =>
@@ -574,8 +531,6 @@ namespace API.Data.Migrations
                     b.Navigation("BookBorrows");
 
                     b.Navigation("BookReservations");
-
-                    b.Navigation("BooksRatings");
                 });
 #pragma warning restore 612, 618
         }

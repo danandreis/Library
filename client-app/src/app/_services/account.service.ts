@@ -55,7 +55,7 @@ export class AccountService {
       next: (user) => {
 
         if (user)
-          isAdmin = user?.roles.includes('Admin')
+          isAdmin = user?.role === 'Admin'
 
       }
 
@@ -72,7 +72,7 @@ export class AccountService {
       next: (user) => {
 
         if (user)
-          isUser = user.roles.includes('user');
+          isUser = user?.role === 'User';
       }
 
     })
@@ -89,7 +89,7 @@ export class AccountService {
       next: (user) => {
 
         if (user)
-          isEmployee = user.roles.includes('employee')
+          isEmployee = user.role === 'Employee'
       }
     })
 

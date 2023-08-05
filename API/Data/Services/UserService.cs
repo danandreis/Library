@@ -2,8 +2,8 @@ using API.Entities;
 using API.Entities.DTO;
 using API.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Services
@@ -27,9 +27,33 @@ namespace API.Data.Services
 
 
         }
-        public void AddUser(AppUser appUser)
+        public async Task<AppUser> AddUser(RegisterUserDTO registerUserDTO)
         {
-            throw new NotImplementedException();
+
+            //Check if username is already used in data base
+            var userDB = await _userManager.FindByNameAsync(registerUserDTO.UserName);
+
+            if (userDB != null && userDB.UserName.Equals(registerUserDTO.UserName)) return null;
+
+            //Check is role exists - if thot they are created
+            if (!await _roleManager.RoleExistsAsync(registerUserDTO.Role))
+            {
+
+                await _roleManager.CreateAsync(new IdentityRole(registerUserDTO.Role));
+
+            }
+
+
+            var newUser = _mapper.Map<AppUser>(registerUserDTO);
+
+            newUser.EmailConfirmed = true;
+
+            await _userManager.CreateAsync(newUser, registerUserDTO.Password);
+
+            await _userManager.AddToRoleAsync(newUser, registerUserDTO.Role);
+
+            return newUser;
+
         }
 
         public Task DeleteUser(string id)
@@ -40,8 +64,17 @@ namespace API.Data.Services
         public async Task<IEnumerable<UserDTO>> GetAllUsers()
         {
 
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users.Include(u => u.subscription).OrderBy(u => u.Name).ToListAsync();
+
             UserDTO[] usersList = _mapper.Map<UserDTO[]>(users);
+
+            foreach (UserDTO userDTO in usersList)
+            {
+
+                userDTO.Role = _userManager.GetRolesAsync(users.Find(u => u.UserName == userDTO.UserName)).
+                                    Result.ToList()[0];
+
+            }
 
             return usersList;
 
@@ -61,9 +94,20 @@ namespace API.Data.Services
 
         }
 
-        public Task<AppUser> GetUser(string id)
+        public async Task<UserDTO> GetUser(string id)
         {
-            throw new NotImplementedException();
+
+            var userDB = await _userManager.FindByIdAsync(id);
+
+            if (userDB == null) return null;
+
+            var user = _mapper.Map<UserDTO>(userDB);
+            user.subscription = await _context.Subscriptions.FindAsync(userDB.SubscriptionId);
+            user.Role = _userManager.GetRolesAsync(userDB).Result.ToList()[0];
+
+
+            return user;
+
         }
 
         public async Task<LoginUserDTO> LoginUser(LoginUserDTO loginUserDTO)
@@ -86,7 +130,7 @@ namespace API.Data.Services
                     {
 
                         LoginUserDTO loginUser = _mapper.Map<LoginUserDTO>(userDB);
-                        loginUser.Roles = _userManager.GetRolesAsync(userDB).Result.ToList();
+                        loginUser.Role = _userManager.GetRolesAsync(userDB).Result.ToList()[0];
                         loginUser.FirstLogin = 0;
                         loginUser.Password = null;
 
@@ -99,9 +143,71 @@ namespace API.Data.Services
             return null;
         }
 
-        public Task<AppUser> UpdateUser(AppUser appUser)
+
+
+        public async Task<AppUser> UpdateUser(UserDTO userDTO)
         {
-            throw new NotImplementedException();
+
+            var userDB = await _userManager.FindByIdAsync(userDTO.Id);
+
+            if (userDB == null) return null;
+
+            var updatedUser = _mapper.Map(userDTO, userDB);
+
+            await _userManager.UpdateAsync(userDB);
+
+            var roluri = await _userManager.GetRolesAsync(userDB);
+
+            foreach (var rol in roluri)
+            {
+
+                await _userManager.RemoveFromRoleAsync(userDB, rol);
+
+            }
+
+            var deleteRoleResult = await _roleManager.FindByNameAsync(userDTO.Role);
+
+            if (deleteRoleResult == null)
+            {
+
+                await _roleManager.CreateAsync(new IdentityRole(userDTO.Role));
+            }
+
+            await _userManager.AddToRoleAsync(userDB, userDTO.Role);
+
+
+            return updatedUser;
+
         }
+
+        public async Task<AppUser> ResetPassword(NewPasswordDTO newPasswordDTO)
+        {
+
+            if (newPasswordDTO.UserId == null) return null;
+
+            var userDB = await _userManager.FindByIdAsync(newPasswordDTO.UserId);
+
+            if (userDB == null) return null;
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(userDB);
+
+            var changePassword = await _userManager.ResetPasswordAsync(userDB, token, newPasswordDTO.Password);
+
+            if (!newPasswordDTO.ChangedByUser)
+            {
+
+                //update firstLogin field in order to client to change the password preset by admin at first login after password reseting -
+                userDB.FirstLogin = 1;
+
+                await _userManager.UpdateAsync(userDB);
+
+            }
+
+            if (!changePassword.Succeeded) return null;
+
+            return userDB;
+
+        }
+
     }
 }

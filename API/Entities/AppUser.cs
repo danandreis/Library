@@ -21,5 +21,6 @@ namespace API.Entities
         //Relation with BookLease
         public List<BookBorrow> BookBorrows { get; set; }
         public List<BookReservation> BookReservations { get; set; }
+        public List<BooksRating> BooksRatings { get; set; }
     }
 }
