@@ -28,6 +28,7 @@ export interface LoginUser {
     name: string,
     userName: string,
     role: string,
-    isBlocked: boolean
+    isBlocked: boolean,
+    firstLogin: number,
 
 }

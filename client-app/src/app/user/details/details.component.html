@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-md-8 offset-2 text-center">
-        <h3 class="fw-bold text-info">User update form</h3>
+        <h3 class="fw-bold text-info" *ngIf="accountService.getLoginUser()!.role == 'Admin'">User update form</h3>
+        <h3 class="fw-bold text-info" *ngIf="accountService.getLoginUser()!.role != 'Admin'"> Account details </h3>
     </div>
     <form [formGroup]="updateUserDataForm" autocomplete="off" *ngIf="showContent" (ngSubmit)="updateUserData()">
         <div class="col-md-8 offset-2">
@@ -71,7 +72,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mt-3">
+                <div class="col-md-6 mt-3" *ngIf="accountService.getLoginUser()!.role == 'Admin'">
                     <label for="roles" class="me-3">Roles</label>
                     <select formControlName="role" id="roles" (change)="checkRole($event)">
                         <option id="subscription" *ngFor="let role of availableRoles" [ngValue]="role"
@@ -85,7 +86,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mt-3">
+                <div class="col-md-6 mt-3"  *ngIf="accountService.getLoginUser()!.role == 'Admin'">
                     <div *ngIf="updateUserDataForm.get('role')?.value == 'User'">
                         <label for="subscription" class="me-3">Subscription</label>
                         <select formControlName="subscriptionId" id="subscription">

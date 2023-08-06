@@ -123,6 +123,7 @@ namespace API.Data.Services
                 {
 
                     loginUserDTO.isBlocked = true;
+
                     return loginUserDTO;
 
                 }
@@ -140,7 +141,7 @@ namespace API.Data.Services
 
                         LoginUserDTO loginUser = _mapper.Map<LoginUserDTO>(userDB);
                         loginUser.Role = _userManager.GetRolesAsync(userDB).Result.ToList()[0];
-                        loginUser.FirstLogin = 0;
+                        loginUser.FirstLogin = userDB.FirstLogin;
                         loginUser.Password = null;
 
                         await _userManager.ResetAccessFailedCountAsync(userDB);
@@ -216,6 +217,17 @@ namespace API.Data.Services
                 await _userManager.UpdateAsync(userDB);
 
             }
+
+            if (newPasswordDTO.ChangedByUser && userDB.FirstLogin == 1)
+            {
+
+                //After the client updates his/her passwortd the firstLogin is set to 0. 
+                userDB.FirstLogin = 0;
+
+                await _userManager.UpdateAsync(userDB);
+
+            }
+
 
             if (!changePassword.Succeeded) return null;
 

@@ -44,9 +44,18 @@ export class LoginComponent implements OnInit {
         this.toastr.success('You have been successfully authenticated');
 
         if (user?.role == 'Admin') this.router.navigateByUrl('/admin/users-list');
-        if (user?.role == 'User') this.router.navigateByUrl('/user/myBooks');
-        if (user?.role == 'Employee') this.router.navigateByUrl('/books/list');
 
+        if (user?.firstLogin == 1) {
+
+          this.router.navigateByUrl(`/user/reset-password/${user.id}`)
+
+        }
+        else {
+
+          if (user?.role == 'User') this.router.navigateByUrl('/user/myBooks');
+          if (user?.role == 'Employee') this.router.navigateByUrl('/books/list');
+
+        }
       },
 
       error: (error) => {

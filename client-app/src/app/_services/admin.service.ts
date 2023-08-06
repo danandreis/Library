@@ -1,10 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../_models/User';
-import { BehaviorSubject, map, retry } from 'rxjs';
-import { NewPassord } from '../_models/NewPassword';
-import { UserSubscription } from '../_models/UserSubscription';
-import { registerLocaleData } from '@angular/common';
+import { BehaviorSubject, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +27,6 @@ export class AdminService {
   }
 
 
-  //Reset password made by admin
-  resetPassword(newPassord: NewPassord) {
-
-    return this.http.put<User>(this.baseUrl + 'users/resetPassword', newPassord);
-
-  }
 
 
   blockUser(user: User) {

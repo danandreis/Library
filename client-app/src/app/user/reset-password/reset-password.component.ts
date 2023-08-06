@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { NewPassord } from 'src/app/_models/NewPassword';
 import { AccountService } from 'src/app/_services/account.service';
 import { AdminService } from 'src/app/_services/admin.service';
 import { UserService } from 'src/app/_services/user.service';
@@ -19,8 +20,7 @@ export class ResetPasswordComponent implements OnInit {
   currentUserRole: string | null = null;
   canResetPassword = false;
 
-
-  constructor(private userService: UserService, private accountService: AccountService, private adminService: AdminService, private router: Router, private route: ActivatedRoute, private toastr: ToastrService) { }
+  constructor(public accountService: AccountService, private router: Router, private route: ActivatedRoute, private toastr: ToastrService) { }
 
   ngOnInit(): void {
 
@@ -91,14 +91,33 @@ export class ResetPasswordComponent implements OnInit {
 
   resetForm() {
 
-    if (this.currentUserRole == 'Admin') this.router.navigateByUrl('/admin/users-list');
     if (this.currentUserRole == 'User') this.router.navigateByUrl('/user/myBooks');
     if (this.currentUserRole == 'Employee') this.router.navigateByUrl('/books/list');
 
   }
 
-  changePassword() {
+  resetPassword(password: string) {
 
+    var newPassword: NewPassord = {} as NewPassord;
+
+    newPassword.userId = this.accountService.getLoginUser()!.id;
+    newPassword.password = password
+    newPassword.changedByUser = true;
+
+    this.accountService.resetPassword(newPassword).subscribe({
+
+      next: () => {
+
+        this.toastr.success("The password was successfully reseted!")
+
+        if (this.currentUserRole == 'User') this.router.navigateByUrl('/user/myBooks');
+        if (this.currentUserRole == 'Employee') this.router.navigateByUrl('/books/list');
+
+        this.accountService.updateUserFirstLogin();
+
+      },
+      error: (error) => this.toastr.error(error.error)
+    })
   }
 
 }

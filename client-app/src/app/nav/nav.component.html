@@ -5,7 +5,8 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <ng-container *ngIf="(accountService.user$ | async)">
-                        <ng-container *ngIf="accountService.hasEmployeeRole()">
+                        <ng-container
+                            *ngIf="accountService.hasEmployeeRole() && !accountService.getLoginUser()!.firstLogin">
                             <li class="nav-item">
                                 <a class="nav-link" routerLink="/books/new">New book</a>
                             </li>
@@ -19,7 +20,8 @@
                                 <a class="nav-link" routerLink="/books/reservations">Reserved books </a>
                             </li>
                         </ng-container>
-                        <ng-container *ngIf="accountService.hasUserRole()">
+                        <ng-container
+                            *ngIf="accountService.hasUserRole() && !accountService.getLoginUser()!.firstLogin">
                             <li class="nav-item">
                                 <a class="nav-link" routerLink="/books/list">Books list</a>
                             </li>
@@ -50,8 +52,15 @@
                     </button>
                     <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu"
                         aria-labelledby="button-basic">
-                        <li role="menuitem"><a class="dropdown-item" href="/user/details">My account</a></li>
-                        <li role="menuitem"><a class="dropdown-item" (click)="logout()">Logout</a></li>
+                        <li role="menuitem">
+                            <a class="dropdown-item" href="/user/details/{{user.id}}">My account</a>
+                        </li>
+                        <li role="menuitem" *ngIf="user.role !='Admin'">
+                            <a class="dropdown-item" href="/user/reset-password/{{user.id}}">Reset password</a>
+                        </li>
+                        <li role="menuitem">
+                            <a class="dropdown-item" (click)="logout()">Logout</a>
+                        </li>
                     </ul>
                 </div>
             </ng-container>

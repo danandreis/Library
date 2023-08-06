@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NewPassord } from 'src/app/_models/NewPassword';
 import { User } from 'src/app/_models/User';
 import { UserSubscription } from 'src/app/_models/UserSubscription';
+import { AccountService } from 'src/app/_services/account.service';
 import { AdminService } from 'src/app/_services/admin.service';
 
 @Component({
@@ -18,7 +19,7 @@ export class UsersListComponent implements OnInit {
   userRole: string = 'All'
   valueToSearch: string = ''
 
-  constructor(public adminService: AdminService, private router: Router, private toastr: ToastrService) { }
+  constructor(public adminService: AdminService, public accountService: AccountService, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit(): void {
 
@@ -119,7 +120,7 @@ export class UsersListComponent implements OnInit {
 
     if (new Date(newDate) < new Date())
       user.accessFailedCount = 3;
-   
+
     return newDate
   }
 
@@ -129,7 +130,6 @@ export class UsersListComponent implements OnInit {
     this.router.navigate(['user/details/', id])
   }
 
-
   resetPassword(id: string) {
 
     var newPassword: NewPassord = {} as NewPassord;
@@ -138,7 +138,7 @@ export class UsersListComponent implements OnInit {
     newPassword.password = 'Password_1234'
     newPassword.changedByUser = false;
 
-    this.adminService.resetPassword(newPassword).subscribe({
+    this.accountService.resetPassword(newPassword).subscribe({
 
       next: () => this.toastr.success("The password was successfully reseted!"),
       error: (error) => this.toastr.error(error.error)

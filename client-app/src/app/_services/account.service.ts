@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { LoginUser, User } from '../_models/User';
 import { UserSubscription } from '../_models/UserSubscription';
+import { NewPassord } from '../_models/NewPassword';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,23 @@ export class AccountService {
 
   }
 
+  updateUserFirstLogin() {
+
+    var loginUserData = localStorage.getItem('loginUserName');
+
+    if (loginUserData != null) {
+
+      localStorage.removeItem('loginUserName');
+
+      const loginUser: LoginUser = JSON.parse(loginUserData);
+      loginUser.firstLogin = 0;
+      this.userSource.next(loginUser);
+
+      localStorage.setItem('loginUserName', JSON.stringify(loginUser));
+
+    }
+  }
+
   getLoginUser() {
 
     var loginUserData = localStorage.getItem('loginUserName');
@@ -45,8 +63,11 @@ export class AccountService {
 
       const loginUser: LoginUser = JSON.parse(loginUserData);
       this.userSource.next(loginUser);
+      return loginUser;
 
     }
+
+    return null;
 
   }
 
@@ -108,6 +129,14 @@ export class AccountService {
       map(subscriptions => { return subscriptions })
 
     );
+
+  }
+
+
+  //Reset password made by admin
+  resetPassword(newPassord: NewPassord) {
+
+    return this.http.put<User>(this.baseUrl + 'users/resetPassword', newPassord);
 
   }
 

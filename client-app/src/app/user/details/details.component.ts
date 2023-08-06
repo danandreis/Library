@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { take } from 'rxjs';
 import { User } from 'src/app/_models/User';
 import { UserSubscription } from 'src/app/_models/UserSubscription';
 import { AccountService } from 'src/app/_services/account.service';
@@ -27,7 +28,7 @@ export class DetailsComponent implements OnInit {
   userDB: User | null = null;
 
 
-  constructor(private accountService: AccountService, private userService: UserService, private toastr: ToastrService, private router: Router, private route: ActivatedRoute) { }
+  constructor(public accountService: AccountService, private userService: UserService, private toastr: ToastrService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
 
@@ -65,7 +66,22 @@ export class DetailsComponent implements OnInit {
           next: (params) => {
 
             var id = params.get('id');
-            if (id) this.getUserData(params.get('id')!)
+
+            if (id) {
+
+              if (this.accountService.getLoginUser()!.role !== 'Admin' && this.accountService.getLoginUser()?.id !== id) {
+
+                this.toastr.error("You are not allowed to change data for other users")
+                if (this.accountService.getLoginUser()!.role == 'User') this.router.navigateByUrl('/user/myBooks');
+                if (this.accountService.getLoginUser()!.role == 'Employee') this.router.navigateByUrl('/books/list');
+
+              }
+              else {
+
+                this.getUserData(params.get('id')!)
+
+              }
+            }
           }
 
         })
@@ -83,7 +99,6 @@ export class DetailsComponent implements OnInit {
       next: (user) => {
 
         if (user) this.userDB = user
-
 
       },
 
@@ -136,7 +151,21 @@ export class DetailsComponent implements OnInit {
 
   cancelUpdate() {
 
-    this.router.navigateByUrl('admin/users-list')
+    this.accountService.user$.pipe(take(1)).subscribe({
+
+      next: (user) => {
+
+        if (user) {
+
+          if (user.role == 'Admin') this.router.navigateByUrl('/admin/users-list');
+          if (user.role == 'User') this.router.navigateByUrl('/user/myBooks');
+          if (user.role == 'Employee') this.router.navigateByUrl('/books/list');
+
+        }
+      }
+
+    })
+
   }
 
   checkRole(event: any) {
