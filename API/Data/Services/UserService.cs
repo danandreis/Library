@@ -102,7 +102,7 @@ namespace API.Data.Services
             if (userDB == null) return null;
 
             var user = _mapper.Map<UserDTO>(userDB);
-            user.subscription = await _context.Subscriptions.FindAsync(userDB.SubscriptionId);
+            user.Subscription = await _context.Subscriptions.FindAsync(userDB.SubscriptionId);
             user.Role = _userManager.GetRolesAsync(userDB).Result.ToList()[0];
 
 
@@ -119,6 +119,15 @@ namespace API.Data.Services
             if (userDB != null)
             {
 
+                if (_userManager.GetAccessFailedCountAsync(userDB).Result == 3)
+                {
+
+                    loginUserDTO.isBlocked = true;
+                    return loginUserDTO;
+
+                }
+                loginUserDTO.isBlocked = false;
+
                 var passwordCheck = await _userManager.CheckPasswordAsync(userDB, loginUserDTO.Password);
 
                 if (passwordCheck)
@@ -134,10 +143,15 @@ namespace API.Data.Services
                         loginUser.FirstLogin = 0;
                         loginUser.Password = null;
 
+                        await _userManager.ResetAccessFailedCountAsync(userDB);
+
                         return loginUser;
 
                     }
+
                 }
+
+                await _userManager.AccessFailedAsync(userDB);
             }
 
             return null;
@@ -209,5 +223,35 @@ namespace API.Data.Services
 
         }
 
+        //AccessFailedCount - When equal to 3 the user is blocked. To Unblock user is set to 0
+        public async Task<AppUser> BlockUser(string id)
+        {
+            var userDB = await _userManager.FindByIdAsync(id);
+
+
+            if (userDB == null) return null;
+
+            for (int indx = 0; indx < 3; indx++)
+                await _userManager.AccessFailedAsync(userDB);
+
+
+            var x = _userManager.GetAccessFailedCountAsync(userDB);
+
+            return userDB;
+
+        }
+
+        public async Task<AppUser> UnblockUser(string id)
+        {
+
+            var userDB = await _userManager.FindByIdAsync(id);
+
+            if (userDB == null) return null;
+
+            await _userManager.ResetAccessFailedCountAsync(userDB);
+
+            return userDB;
+
+        }
     }
 }

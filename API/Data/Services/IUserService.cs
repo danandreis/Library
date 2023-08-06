@@ -20,6 +20,8 @@ namespace API.Services
         Task<IEnumerable<Subscription>> GetSubscriptions();
         Task<IEnumerable<IdentityRole>> GetRoles();
         Task<AppUser> ResetPassword(NewPasswordDTO newPasswordDTO);
+        Task<AppUser> BlockUser(string id);
+        Task<AppUser> UnblockUser(string id);
 
     }
 }

@@ -26,32 +26,42 @@
         </div>
     </div>
     <table class="table mt-5 border">
-        <tr class="bg-light text-center">
+        <tr class="bg-light">
+            <th></th>
             <th>Name</th>
             <th>Subscription</th>
             <th>Role</th>
             <th>Phone</th>
             <th>E-mail</th>
-            <th>Registration</th>
-            <th>Options</th>
+            <th>Reg. Starts</th>
+            <th>Reg. ends</th>
+            <th class="text-center">Options</th>
         </tr>
         <tr *ngFor="let user of users">
+            <td style="width: 50px;">
+                <i *ngIf="user.accessFailedCount == 3" class="fa fa-exclamation" aria-hidden="true"
+                    style="color:red;"></i>
+            </td>
             <td>{{user.name}}</td>
             <td>{{user.subscription == null?'N/A':user.subscription.type}}</td>
             <td>{{user.role}}</td>
             <td>{{user.phoneNumber ? user.phoneNumber:'N/A'}}</td>
             <td>{{user.email}}</td>
             <td>{{user.registrationDate | date:'dd.MM.YYYY'}}</td>
-            <td>
+            <td>{{user.registrationEnds | date:'dd.MM.YYYY'}}</td>
+            <td class="text-center">
                 <input type="submit" class="btn btn-outline-secondary " style="margin-right: 7px;" value="Edit user"
                     (click)="editUser(user.id)" />
 
                 <input type="submit" class="btn btn-outline-primary " style="margin-right: 7px;" value="Reset Passord"
                     (click)="resetPassword(user.id)" />
 
-                <input type="submit" class="btn btn-outline-danger" value="Block user" />
-            </td>
+                <input *ngIf="user.accessFailedCount == 3" type="submit" class="btn btn-outline-danger col-3"
+                    value="Unblock user" (click)="unblockUser(user)" />
+                <input *ngIf="user.accessFailedCount != 3" type="submit" class="btn btn-outline-danger col-3"
+                    value="Block user" (click)="blockUser(user)" />
 
+            </td>
         </tr>
     </table>
 </div>

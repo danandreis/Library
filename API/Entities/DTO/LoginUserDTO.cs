@@ -9,6 +9,7 @@ namespace API.Entities.DTO
         public string Password { get; set; }
         public int FirstLogin { get; set; }
         public string Role { get; set; }
+        public bool isBlocked { get; set; }
 
     }
 }

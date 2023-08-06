@@ -1,3 +1,4 @@
+using System.Text.Json;
 using API.Entities;
 using API.Entities.DTO;
 using API.Services;
@@ -62,6 +63,8 @@ namespace API.Controllers
 
             var loginUser = await _userService.LoginUser(loginUserDTO);
 
+            if (loginUser != null && loginUser.isBlocked) return BadRequest("Your account is blocked, please contact the administrator!");
+
             if (loginUser == null) return BadRequest("Invalid login credentials");
 
             return Ok(loginUser);
@@ -102,6 +105,30 @@ namespace API.Controllers
 
             if (result == null)
                 return BadRequest("There is no user with this ID in database");
+
+            return Ok(result);
+        }
+
+        [HttpPut("blockUser")]
+        public async Task<ActionResult<AppUser>> BlockUser(AppUser user)
+        {
+
+            var result = await _userService.BlockUser(user.Id);
+
+            if (result == null)
+                return BadRequest("There was an error when blocking the user");
+
+            return Ok(result);
+        }
+
+        [HttpPut("unblockUser")]
+        public async Task<ActionResult<AppUser>> UnblockUser(AppUser user)
+        {
+
+            var result = await _userService.UnblockUser(user.Id);
+
+            if (result == null)
+                return BadRequest("There was an error when unblocking the user");
 
             return Ok(result);
         }

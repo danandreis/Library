@@ -20,13 +20,17 @@ export class AccountService {
 
     return this.http.post<LoginUser>(this.baseUrl + 'users', user).pipe(
 
-      map((response) => {
+      map((response: LoginUser) => {
 
         if (response) {
 
           localStorage.setItem('loginUserName', JSON.stringify(response));
           this.userSource.next(response);
+          return response;
+
         }
+
+        return null;
 
       })
     );

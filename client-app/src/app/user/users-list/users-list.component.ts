@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { NewPassord } from 'src/app/_models/NewPassword';
 import { User } from 'src/app/_models/User';
+import { UserSubscription } from 'src/app/_models/UserSubscription';
 import { AdminService } from 'src/app/_services/admin.service';
 
 @Component({
@@ -17,7 +18,7 @@ export class UsersListComponent implements OnInit {
   userRole: string = 'All'
   valueToSearch: string = ''
 
-  constructor(private http: HttpClient, public adminService: AdminService, private router: Router, private toastr: ToastrService) { }
+  constructor(public adminService: AdminService, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit(): void {
 
@@ -43,11 +44,12 @@ export class UsersListComponent implements OnInit {
 
   getUsersList(value: string, role: string) {
 
-
     this.adminService.usersList$.subscribe(
       {
 
         next: (list) => {
+
+          list.forEach(user => user.registrationEnds = this.setregistrationEnd(user))
 
           if (value !== '') {
 
@@ -73,13 +75,54 @@ export class UsersListComponent implements OnInit {
 
           return this.users;
 
-        }
+        },
 
       }
 
     )
 
   }
+
+  setregistrationEnd(user: User) {
+
+
+    var newDate = new Date(user.registrationDate);
+
+    if (user.subscription != null) {
+
+      switch (user.subscription.type) {
+
+        case 'Monthly':
+          newDate = new Date(newDate.setDate(newDate.getDate() + 30))
+          break;
+
+        case 'Quarterly':
+          newDate = new Date(newDate.setDate(newDate.getDate() + 90))
+          break;
+
+        case 'Semestrial':
+          newDate = new Date(newDate.setDate(newDate.getDate() + 180))
+          break;
+
+        case 'Annualy':
+          newDate = new Date(newDate.setDate(newDate.getDate() + 365))
+          break;
+      }
+
+    }
+    else {
+
+      newDate = new Date(Date.now());
+      newDate = new Date(newDate.setDate(newDate.getDate() + 3650))
+
+    }
+
+    if (new Date(newDate) < new Date())
+      user.accessFailedCount = 3;
+   
+    return newDate
+  }
+
 
   editUser(id: string) {
 
@@ -100,7 +143,37 @@ export class UsersListComponent implements OnInit {
       next: () => this.toastr.success("The password was successfully reseted!"),
       error: (error) => this.toastr.error(error.error)
     })
+  }
 
+  blockUser(user: User) {
+
+    this.adminService.blockUser(user).subscribe({
+
+      next: () => {
+
+        this.toastr.success("The user has been successfully blocked");
+        this.adminService.getUsers();
+        this.getUsersList(this.valueToSearch, this.userRole);
+      },
+      error: (error) => this.toastr.error(error.error)
+    })
+
+  }
+
+  unblockUser(user: User) {
+
+
+    this.adminService.unblockUser(user).subscribe({
+
+      next: () => {
+
+        this.toastr.success("The user has been successfully unblocked");
+        this.adminService.getUsers();
+        this.getUsersList(this.valueToSearch, this.userRole);
+      },
+
+      error: (error) => this.toastr.error(error.error)
+    })
 
   }
 

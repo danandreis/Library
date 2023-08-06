@@ -11,6 +11,7 @@ namespace API.Entities.DTO
         public string Address { get; set; }
         public string IdCard { get; set; }
         public int FirstLogin { get; set; }
+        public int AccessFailedCount { get; set; }
         public DateTime RegistrationDate { get; set; }
         public string SubscriptionId { get; set; }
         public string Email { get; set; }

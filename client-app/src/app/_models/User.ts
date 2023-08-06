@@ -2,12 +2,13 @@ import { UserSubscription } from "./UserSubscription"
 
 export interface User {
 
-    id: string ,
+    id: string,
     name: string,
     userName: string,
     address: string,
     personalCode: string,
     registrationDate: Date,
+    registrationEnds: Date,
     idCard: string,
     subscriptionId: string | null,
     subscription: UserSubscription,
@@ -15,7 +16,8 @@ export interface User {
     phoneNumber: string,
     firstLogin: number,
     password: string,
-    role: string
+    role: string,
+    accessFailedCount: number
 
 }
 
@@ -25,6 +27,7 @@ export interface LoginUser {
     id: string,
     name: string,
     userName: string,
-    role: string
+    role: string,
+    isBlocked: boolean
 
 }

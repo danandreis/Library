@@ -39,18 +39,13 @@ export class LoginComponent implements OnInit {
 
     this.accountService.login(this.loginForm.value).subscribe({
 
-      next: () => {
+      next: (user) => {
 
         this.toastr.success('You have been successfully authenticated');
 
-        this.accountService.user$.subscribe({
-          next: (user) => {
-
-            if (user?.role == 'Admin') this.router.navigateByUrl('/admin/users-list');
-            if (user?.role == 'User') this.router.navigateByUrl('/user/myBooks');
-            if (user?.role == 'Employee') this.router.navigateByUrl('/books/list');
-          }
-        })
+        if (user?.role == 'Admin') this.router.navigateByUrl('/admin/users-list');
+        if (user?.role == 'User') this.router.navigateByUrl('/user/myBooks');
+        if (user?.role == 'Employee') this.router.navigateByUrl('/books/list');
 
       },
 
@@ -64,6 +59,5 @@ export class LoginComponent implements OnInit {
     });
 
   }
-
 
 }
