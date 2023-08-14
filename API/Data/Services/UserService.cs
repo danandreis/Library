@@ -2,7 +2,6 @@ using API.Entities;
 using API.Entities.DTO;
 using API.Services;
 using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

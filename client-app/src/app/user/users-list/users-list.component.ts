@@ -1,10 +1,8 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { NewPassord } from 'src/app/_models/NewPassword';
 import { User } from 'src/app/_models/User';
-import { UserSubscription } from 'src/app/_models/UserSubscription';
 import { AccountService } from 'src/app/_services/account.service';
 import { AdminService } from 'src/app/_services/admin.service';
 

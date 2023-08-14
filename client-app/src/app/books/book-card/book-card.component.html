@@ -1,0 +1,48 @@
+<div class="card">
+    <div class="card-header text-center fw-bold">{{book?.title}}</div>
+    <div class="row">
+        <div class="col-md-3">
+            <img class="mt-4" src='../../../assets/cover.png' width="100" height="150">
+        </div>
+        <div class="col-md-9">
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <td>Author:</td>
+                        <td class="fs-50 fw-bold">{{book?.author}}</td>
+                    </tr>
+                    <tr>
+                        <td>Publisher:</td>
+                        <td class="fw-bold">{{book?.publisher}}</td>
+                    </tr>
+                    <tr>
+                        <td>Year:</td>
+                        <td class="fw-bold">{{book?.year}}</td>
+                    </tr>
+                    <tr>
+                        <td>Pages:</td>
+                        <td class="fw-bold">{{book?.pages}}</td>
+                    </tr>
+                    <tr>
+                        <td>Domain:</td>
+                        <td class="fw-bold">{{book?.bookDomain?.domain}}</td>
+                    </tr>
+                    <tr>
+                        <td>Language:</td>
+                        <td class="fw-bold">{{book?.bookLanguage?.language}}</td>
+                    </tr>
+                    <tr>
+                        <td>Type:</td>
+                        <td class="fw-bold">{{book?.bookType?.type}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-body-secondary">
+        <input class="btn btn-outline-info me-3 ms-2" type="submit" value="Edit book">
+        <input class="btn btn-outline-success me-3" type="submit" value="Borrow">
+        <input class="btn btn-outline-secondary me-3" type="submit" value="Reserve">
+        <input class="btn btn-outline-danger" type="submit" value="Delete">
+    </div>
+</div>

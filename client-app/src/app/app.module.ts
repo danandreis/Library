@@ -20,6 +20,7 @@ import { BorrowsComponent } from './books/borrows/borrows.component';
 import { ReservationsComponent } from './books/reservations/reservations.component';
 import { ListBookComponent } from './books/list-book/list-book.component';
 import { ResetPasswordComponent } from './user/reset-password/reset-password.component';
+import { BookCardComponent } from './books/book-card/book-card.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { ResetPasswordComponent } from './user/reset-password/reset-password.com
     EditBookComponent,
     NewBookComponent,
     ListBookComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    BookCardComponent
   ],
   imports: [
     BrowserModule,

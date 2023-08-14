@@ -33,7 +33,8 @@ builder.Services.AddTransient<IPrincipal>(provider => provider.GetService<IHttpC
 
 builder.Services.AddCors();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 
 

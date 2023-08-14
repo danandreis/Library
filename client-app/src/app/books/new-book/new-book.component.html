@@ -1,1 +1,121 @@
-<p>new-book works!</p>
+<div class="row">
+    <div class="col-md-8 offset-2 text-center">
+        <h2 class="text-info fw-bold"> Add new Book form</h2>
+    </div>
+    <form [formGroup]="newBookForm" autocomplete="off" *ngIf="showContent" (ngSubmit)="addBook(newBookForm.value)">
+        <div class="col-md-6 offset-3">
+            <div class="row">
+                <div class="col-md-6 mt-3">
+                    <label for="title">Title</label>
+                    <input class="form-control" type="text" id="title" formControlName="title"
+                        [class.is-invalid]="newBookForm.get('title')?.touched && newBookForm.get('title')?.errors" />
+                    <div class="invalid-feedback"
+                        *ngIf="newBookForm.get('title')?.hasError('required') || newBookForm.get('title')?.hasError('notEmpty')">
+                        Enter a title for the book!
+                    </div>
+                </div>
+                <div class=" col-md-6 mt-3">
+                    <label for="author">Author</label>
+                    <input class="form-control" type="text" id="author" formControlName="author"
+                        [class.is-invalid]="newBookForm.get('author')?.touched && newBookForm.get('author')?.errors" />
+                    <div class="invalid-feedback"
+                        *ngIf="newBookForm.get('author')?.hasError('required') || newBookForm.get('author')?.hasError('notEmpty')">
+                        Enter an author for the book!
+                    </div>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label for="publisher">Publisher</label>
+                    <input class="form-control" type="text" id="publisher" formControlName="publisher"
+                        [class.is-invalid]="newBookForm.get('publisher')?.touched && newBookForm.get('publisher')?.errors" />
+                    <div class="invalid-feedback"
+                        *ngIf="newBookForm.get('publisher')?.hasError('required') || newBookForm.get('publisher')?.hasError('notEmpty')">
+                        Enter a publisher for the book!
+                    </div>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label for="year">Year</label>
+                    <input class="form-control" type="text" id="year" formControlName="year"
+                        [class.is-invalid]="newBookForm.get('year')?.touched && newBookForm.get('year')?.errors" />
+                    <div class="invalid-feedback"
+                        *ngIf="newBookForm.get('year')?.hasError('required') || newBookForm.get('year')?.hasError('pattern') || newBookForm.get('year')?.hasError('max')">
+                        Enter a valid year for the book!
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label for="pages">Pages</label>
+                    <input class="form-control" formControlName="pages"
+                        [class.is-invalid]="newBookForm.get('pages')?.errors && newBookForm.get('pages')?.touched" />
+                    <div class="invalid-feedback"
+                        *ngIf="newBookForm.get('pages')?.hasError('required') || newBookForm.get('pages')?.hasError('min') || newBookForm.get('pages')?.hasError('notNumber')">
+                        The number of pages is not correct!
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label for="isbn">ISBN</label>
+                    <input class="form-control" formControlName="isbn"
+                        [class.is-invalid]="newBookForm.get('isbn')?.errors && newBookForm.get('isbn')?.touched" />
+                    <div class="invalid-feedback"
+                        *ngIf="newBookForm.get('isbn')?.hasError('required') || newBookForm.get('isbn')?.hasError('pattern') ">
+                        Enter a valid ISBN code for the book (7 digits)!
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label for="copies">Copies</label>
+                    <input type="number" class="form-control" formControlName="copies" min="1"
+                        [class.is-invalid]="newBookForm.get('copies')?.errors && newBookForm.get('copies')?.touched" />
+                    <div class="invalid-feedback"
+                        *ngIf="newBookForm.get('copies')?.hasError('required') || newBookForm.get('copies')?.hasError('min') ">
+                        Enter a valid number of copies!
+                    </div>
+                </div>
+                <div class="col-md-4 mt-4">
+                    <label class="me-3" for="domains">Domains</label>
+                    <select id="domains" formControlName="bookDomainId">
+                        <option *ngFor="let domain of availableDomains" [ngValue]="domain.id">{{domain.domain}}
+                        </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="newBookForm.get('bookDomainId')?.hasError('required')">
+                        Select a domain for the book!
+                    </div>
+                </div>
+                <div class="col-md-4 mt-4">
+                    <label class="me-3" for="language">Language</label><br>
+                    <select id="laguage" formControlName="bookLanguageId">
+                        <option *ngFor="let language of availableLanguages" [ngValue]="language.id">
+                            {{language.language}}
+                        </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="newBookForm.get('bookLanguageId')?.hasError('required')">
+                        Select a language for this book!
+                    </div>
+                </div>
+                <div class="col-md-4 mt-4">
+                    <label class="me-3" for="type">Format</label><br>
+                    <select id="format" formControlName="bookTypeId">
+                        <option *ngFor="let type of availableBookTypes" [ngValue]="type.id">{{type.type}}</option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="newBookForm.get('bookTypeId')?.hasError('required')">
+                        Select a type for this book!
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" formControlName="description" style="resize: none;"
+                        [class.is-invalid]="newBookForm.get('description')?.errors && newBookForm.get('description')?.touched">
+                    </textarea>
+                    <div class="invalid-feedback"
+                        *ngIf="newBookForm.get('description')?.hasError('required') || newBookForm.get('description')?.hasError('notEmpty')">
+                        Enter a description for this book!
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4 text-center">
+                    <input class="btn btn-outline-success me-5" type="submit" value="Add new book"
+                        [disabled]="!newBookForm.valid" />
+                    <input class="btn btn-outline-danger" type="button" value="Cancel" (click)="cancelAddBook()" />
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+</div>

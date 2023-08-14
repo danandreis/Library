@@ -11,11 +11,12 @@ namespace API.Entities.Mapper
 
             CreateMap<AppUser, UserDTO>();
             CreateMap<UserDTO, AppUser>();
-            
             CreateMap<AppUser, LoginUserDTO>();
-
             CreateMap<RegisterUserDTO, AppUser>();
-            
+
+            CreateMap<Book, BookDTO>();
+            CreateMap<BookDTO, Book>();
+
 
         }
 
