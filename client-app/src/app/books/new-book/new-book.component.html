@@ -2,6 +2,7 @@
     <div class="col-md-8 offset-2 text-center">
         <h2 class="text-info fw-bold"> Add new Book form</h2>
     </div>
+    <ngx-spinner type="timer" style="color:#fff">Loading...</ngx-spinner>
     <form [formGroup]="newBookForm" autocomplete="off" *ngIf="showContent" (ngSubmit)="addBook(newBookForm.value)">
         <div class="col-md-6 offset-3">
             <div class="row">
@@ -41,7 +42,7 @@
                         Enter a valid year for the book!
                     </div>
                 </div>
-                <div class="col-md-4 mt-3">
+                <div class="col-md-6 mt-3">
                     <label for="pages">Pages</label>
                     <input class="form-control" formControlName="pages"
                         [class.is-invalid]="newBookForm.get('pages')?.errors && newBookForm.get('pages')?.touched" />
@@ -50,22 +51,13 @@
                         The number of pages is not correct!
                     </div>
                 </div>
-                <div class="col-md-4 mt-3">
+                <div class="col-md-6 mt-3">
                     <label for="isbn">ISBN</label>
                     <input class="form-control" formControlName="isbn"
                         [class.is-invalid]="newBookForm.get('isbn')?.errors && newBookForm.get('isbn')?.touched" />
                     <div class="invalid-feedback"
                         *ngIf="newBookForm.get('isbn')?.hasError('required') || newBookForm.get('isbn')?.hasError('pattern') ">
                         Enter a valid ISBN code for the book (7 digits)!
-                    </div>
-                </div>
-                <div class="col-md-4 mt-3">
-                    <label for="copies">Copies</label>
-                    <input type="number" class="form-control" formControlName="copies" min="1"
-                        [class.is-invalid]="newBookForm.get('copies')?.errors && newBookForm.get('copies')?.touched" />
-                    <div class="invalid-feedback"
-                        *ngIf="newBookForm.get('copies')?.hasError('required') || newBookForm.get('copies')?.hasError('min') ">
-                        Enter a valid number of copies!
                     </div>
                 </div>
                 <div class="col-md-4 mt-4">

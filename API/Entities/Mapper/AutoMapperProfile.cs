@@ -16,6 +16,7 @@ namespace API.Entities.Mapper
 
             CreateMap<Book, BookDTO>();
             CreateMap<BookDTO, Book>();
+            CreateMap<Book, Book>();
 
 
         }

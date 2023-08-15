@@ -7,6 +7,7 @@ import { BookDomain } from 'src/app/_models/BookDomain';
 import { BookLanguage } from 'src/app/_models/BookLanguage';
 import { BookType } from 'src/app/_models/BookType';
 import { BookService } from 'src/app/_services/book.service';
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
   selector: 'app-new-book',
@@ -22,9 +23,12 @@ export class NewBookComponent implements OnInit {
   availableBookTypes: BookType[] = []
   timer: any;
 
-  constructor(private bookService: BookService, private toastr: ToastrService, private router: Router) { }
+  constructor(private bookService: BookService, private toastr: ToastrService, private router: Router,
+    private spinner: NgxSpinnerService) { }
 
   ngOnInit(): void {
+
+    this.spinner.show();
 
     this.timer = setInterval(() => this.AddBookFormValues(), 300)
 
@@ -41,7 +45,6 @@ export class NewBookComponent implements OnInit {
       Validators.max(new Date().getFullYear())]),
       pages: new FormControl('', [Validators.required, Validators.min(1), this.validateNumber()]),
       isbn: new FormControl('', [Validators.required, Validators.pattern('^(\\d){7}$')]),
-      copies: new FormControl('1', [Validators.required, Validators.min(1)]),
       bookDomainId: new FormControl(this.availableDomains.at(0)!.id, [Validators.required]),
       bookLanguageId: new FormControl(this.availableLanguages.at(0)!.id, [Validators.required]),
       bookTypeId: new FormControl(this.availableBookTypes.at(0)!.id, [Validators.required]),
@@ -92,7 +95,10 @@ export class NewBookComponent implements OnInit {
       next: (bookTypes) => this.availableBookTypes = bookTypes,
     })
 
-    if (this.availableDomains.length != 0 && this.availableLanguages.length != 0 && this.availableBookTypes.length != 0) {
+    if (this.availableDomains.length != 0 && this.availableLanguages.length != 0
+      && this.availableBookTypes.length != 0) {
+
+      this.spinner.hide()
       this.initializeAddBookForm();
       this.showContent = true;
       clearTimeout(this.timer);
@@ -103,14 +109,15 @@ export class NewBookComponent implements OnInit {
 
   addBook(book: Book) {
 
-
+    book.copies = 1;
+    
     this.bookService.addNewBook(book).subscribe({
 
       next: () => {
 
         this.toastr.success("The book was successfully added to database!");
         this.router.navigateByUrl('books/list');
-        
+
       },
       error: (error) => this.toastr.error(error.error)
 

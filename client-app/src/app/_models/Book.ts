@@ -12,12 +12,12 @@ export interface Book {
     pages: number,
     isbn: string,
     copies: number,
-    bookDomainId:string,
+    bookDomainId: string,
     bookDomain: BookDomain,
-    bookLanguageId:string,
+    bookLanguageId: string,
     bookLanguage: BookLanguage,
-    bookTypeId:string,
+    bookTypeId: string,
     bookType: BookType,
-    Description: string,
-    Rating: number
+    description: string,
+    rating: number
 }

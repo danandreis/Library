@@ -4,12 +4,15 @@ import { BookDomain } from '../_models/BookDomain';
 import { BookLanguage } from '../_models/BookLanguage';
 import { BookType } from '../_models/BookType';
 import { Book } from '../_models/Book';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookService {
 
+  booksList = new BehaviorSubject<Book[]>([]);
+  booksList$ = this.booksList.asObservable();
   baseUrl = 'https://localhost:5001/api/'
 
   constructor(private http: HttpClient) { }
@@ -32,11 +35,31 @@ export class BookService {
 
   addNewBook(book: Book) {
 
-    return this.http.post<Book>(this.baseUrl + 'books', book)
+    return this.http.post<Book>(this.baseUrl + 'books', book);
   }
 
   getBooks() {
 
-    return this.http.get<Book[]>(this.baseUrl + 'books')
+    this.http.get<Book[]>(this.baseUrl + 'books').subscribe({
+
+      next: (books) => this.booksList.next(books)
+
+    });
+  }
+
+  getBook(id: string) {
+
+    return this.http.get<Book>(this.baseUrl + `books/${id}`);
+  }
+
+  updateBookDetails(book: Book) {
+
+    return this.http.put<Book>(this.baseUrl + 'books', book);
+  }
+
+  deleteBook(id: string) {
+
+    return this.http.delete<Book>(this.baseUrl + `books/${id}`)
+
   }
 }

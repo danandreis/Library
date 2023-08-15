@@ -12,12 +12,12 @@ namespace API.Data.Services
     {
 
         Task<IEnumerable<BookDTO>> GetBooks();
-        Task<Book> GetBook(string id);
+        Task<BookDTO> GetBook(string id);
         Task<IEnumerable<BookDomain>> GetDomains();
         Task<IEnumerable<BookType>> GetTypes();
         Task<IEnumerable<BookLanguage>> GetLanguages();
         Task<Book> AddBook(Book book);
-        Task<Book> EditBook(Book book);
+        Task<Book> UpdateBook(Book book);
         Task<Book> DeleteBook(string id);
 
     }

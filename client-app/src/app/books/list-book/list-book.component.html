@@ -3,9 +3,9 @@
         <h2 class="text-center text-info fw-bold">
             Books list
         </h2>
-
     </div>
-    <div class="col-md-4 mt-3" *ngFor="let book of booksList">
+    <ngx-spinner type="timer" style="color:#fff">Loading...</ngx-spinner>
+    <div class="col-md-4 mt-3" *ngFor="let book of books">
         <app-book-card [book]="book"></app-book-card>
     </div>
 </div>

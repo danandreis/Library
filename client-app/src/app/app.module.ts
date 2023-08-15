@@ -21,6 +21,8 @@ import { ReservationsComponent } from './books/reservations/reservations.compone
 import { ListBookComponent } from './books/list-book/list-book.component';
 import { ResetPasswordComponent } from './user/reset-password/reset-password.component';
 import { BookCardComponent } from './books/book-card/book-card.component';
+import { NgxSpinnerModule } from "ngx-spinner";
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,11 @@ import { BookCardComponent } from './books/book-card/book-card.component';
     ReactiveFormsModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right'
-    })
+    }),
+    NgxSpinnerModule.forRoot({
+      type: 'timer'
+    }),
+    ModalModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

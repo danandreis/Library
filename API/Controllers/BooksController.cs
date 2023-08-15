@@ -28,6 +28,18 @@ namespace API.Controllers
             return await _bookService.GetBooks();
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<BookDTO>> GetBook(string id)
+        {
+
+            var result = await _bookService.GetBook(id);
+
+            if (result == null) return BadRequest("There no book with this ID in database");
+
+            return result;
+
+        }
+
         [HttpGet("domains")]
         public async Task<IEnumerable<BookDomain>> GetDomain()
         {
@@ -59,6 +71,29 @@ namespace API.Controllers
 
             return book;
 
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Book>> UpdateBook(Book book)
+        {
+
+            var result = await _bookService.UpdateBook(book);
+
+            if (result == null) return BadRequest("There was an error when updating the book's info");
+
+            return result;
+
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Book>> DeleteBook(string id)
+        {
+
+            var result = await _bookService.DeleteBook(id);
+
+            if (result == null) return BadRequest("There wa an error when deleting the selected book");
+
+            return result;
         }
 
     }

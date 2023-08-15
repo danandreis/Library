@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Book } from 'src/app/_models/Book';
 import { BookService } from 'src/app/_services/book.service';
+import { NgxSpinnerService } from "ngx-spinner";
+import { BehaviorSubject } from 'rxjs';
+import { AccountService } from 'src/app/_services/account.service';
 
 @Component({
   selector: 'app-list-book',
@@ -9,20 +12,34 @@ import { BookService } from 'src/app/_services/book.service';
 })
 export class ListBookComponent implements OnInit {
 
-  booksList: Book[] = []
-  constructor(private bookService: BookService) { }
+
+  books: Book[] = []
+
+
+  constructor(private bookService: BookService, private spinner: NgxSpinnerService) { }
 
   ngOnInit(): void {
 
-    this.bookService.getBooks().subscribe({
+    this.spinner.show();
 
-      next: (list) => {
+    //Extract books from database
+    this.bookService.getBooks();
 
-        this.booksList = list
-
-      }
-
-    })
+    this.getBooksList();
   }
+
+  getBooksList() {
+
+    this.bookService.booksList$.subscribe({
+
+      next: (list) => this.books = list
+    })
+
+    this.spinner.hide()
+
+    return this.books;
+  }
+
+
 
 }

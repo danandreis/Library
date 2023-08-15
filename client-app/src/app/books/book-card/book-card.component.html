@@ -40,9 +40,20 @@
         </div>
     </div>
     <div class="card-footer text-body-secondary">
-        <input class="btn btn-outline-info me-3 ms-2" type="submit" value="Edit book">
-        <input class="btn btn-outline-success me-3" type="submit" value="Borrow">
-        <input class="btn btn-outline-secondary me-3" type="submit" value="Reserve">
-        <input class="btn btn-outline-danger" type="submit" value="Delete">
+        <input *ngIf="userRole == 'Employee'" class="btn btn-outline-info me-5 ms-5" type="submit" value="Edit book" (click)="editBook(book?.id!)">
+        <input *ngIf="userRole == 'User'" class="btn btn-outline-success me-5 ms-5" type="submit" value="Borrow">
+        <input *ngIf="userRole == 'User'" class="btn btn-outline-secondary me-5 ms-5" type="submit" value="Reserve">
+        <input *ngIf="userRole == 'Employee'" class="btn btn-outline-danger" type="submit" value="Delete"
+            (click)="deleteBook(book!,deleteConfirmation)">
     </div>
 </div>
+
+<ng-template #deleteConfirmation>
+    <div class="modal-header text-center">The following book is about to be deleted</div>
+    <div class="text-center fw-bold ">{{title}}</div>
+    <div class="modal-body text-center">
+        <p>{{message}}</p>
+        <button type="button" class="btn btn-outline-danger me-3" (click)="confirm()">Yes</button>
+        <button type="button" class="btn btn-outline-primary" (click)="decline()">No</button>
+    </div>
+</ng-template>

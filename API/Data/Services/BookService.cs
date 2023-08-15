@@ -1,7 +1,6 @@
 using API.Entities;
 using API.Entities.DTO;
 using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Services
@@ -31,19 +30,49 @@ namespace API.Data.Services
 
         }
 
-        public Task<Book> DeleteBook(string id)
+        public async Task<Book> DeleteBook(string id)
         {
-            throw new NotImplementedException();
+
+            if (id == null) return null;
+
+            var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == id);
+
+            if (book == null) return null;
+
+            _context.Books.Remove(book);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (!result) return null;
+
+            return book;
+
         }
 
-        public Task<Book> EditBook(Book book)
+        public async Task<Book> UpdateBook(Book book)
         {
-            throw new NotImplementedException();
+            if (book == null) return null;
+
+            var bookDB = await _context.Books.FindAsync(book.Id);
+
+            _mapper.Map(book, bookDB);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (!result) return null;
+
+            return book;
+
         }
 
-        public Task<Book> GetBook(string id)
+        public async Task<BookDTO> GetBook(string id)
         {
-            throw new NotImplementedException();
+
+            var result = await _context.Books.Include(b => b.BookDomain).Include(b => b.BookType).
+                Include(b => b.BookLanguage).FirstOrDefaultAsync(b => b.Id == id);
+
+            return _mapper.Map<BookDTO>(result);
+
         }
 
         public async Task<IEnumerable<BookDTO>> GetBooks()
