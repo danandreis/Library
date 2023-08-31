@@ -4,6 +4,7 @@ import { BehaviorSubject, map } from 'rxjs';
 import { LoginUser, User } from '../_models/User';
 import { UserSubscription } from '../_models/UserSubscription';
 import { NewPassord } from '../_models/NewPassword';
+import { BorrowService } from './borrow.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class AccountService {
   user$ = this.userSource.asObservable();
   rolesList: any = {};
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private borrowService: BorrowService) { }
 
   login(user: User) {
 
@@ -27,6 +28,7 @@ export class AccountService {
 
           localStorage.setItem('loginUserName', JSON.stringify(response));
           this.userSource.next(response);
+          this.borrowService.userHasBorrowedBooks = false;
           return response;
 
         }

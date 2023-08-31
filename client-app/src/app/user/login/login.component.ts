@@ -52,8 +52,7 @@ export class LoginComponent implements OnInit {
         }
         else {
 
-          if (user?.role == 'User') this.router.navigateByUrl('/user/myBooks');
-          if (user?.role == 'Employee') this.router.navigateByUrl('/books/list');
+          if (user?.role == 'User' || user?.role == 'Employee') this.router.navigateByUrl('/books/list');
 
         }
       },

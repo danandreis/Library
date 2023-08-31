@@ -5,6 +5,8 @@ import { BookLanguage } from '../_models/BookLanguage';
 import { BookType } from '../_models/BookType';
 import { Book } from '../_models/Book';
 import { BehaviorSubject } from 'rxjs';
+import { BorrowService } from './borrow.service';
+import { BorrowedBook } from '../_models/BorrowedBook';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,7 @@ export class BookService {
   booksList$ = this.booksList.asObservable();
   baseUrl = 'https://localhost:5001/api/'
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private borrowService: BorrowService) { }
 
   getDomanis() {
 
@@ -62,4 +64,5 @@ export class BookService {
     return this.http.delete<Book>(this.baseUrl + `books/${id}`)
 
   }
+
 }

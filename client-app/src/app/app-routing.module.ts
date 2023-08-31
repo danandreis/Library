@@ -13,6 +13,7 @@ import { BorrowsComponent } from './books/borrows/borrows.component';
 import { ReservationsComponent } from './books/reservations/reservations.component';
 import { ListBookComponent } from './books/list-book/list-book.component';
 import { ResetPasswordComponent } from './user/reset-password/reset-password.component';
+import { EditComponent } from './user/edit/edit.component';
 
 const routes: Routes = [
 
@@ -30,7 +31,7 @@ const routes: Routes = [
       { path: 'books/list', component: ListBookComponent },                     //List of all books available
 
       { path: 'user/myBooks', component: UserBooksComponent },            //Borrowed or reserved books for specified client
-      { path: 'user/details/:id', component: DetailsComponent },                    // Details user acoount info
+      { path: 'user/edit/:id', component: EditComponent },                          // Edit user acoount info
       { path: 'user/reset-password/:id', component: ResetPasswordComponent },        //Reset of user password
 
       { path: 'admin/users-list', component: UsersListComponent, canActivate: [AdminGuard] },

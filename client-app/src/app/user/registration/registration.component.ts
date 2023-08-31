@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { User } from 'src/app/_models/User';
 import { UserSubscription } from 'src/app/_models/UserSubscription';
@@ -28,12 +29,11 @@ export class RegistrationComponent implements OnInit {
   newUser: User | null = null;
   isUserNameRegistered: boolean = false;
 
-  constructor(private accountService: AccountService, private userService: UserService, private adminService: AdminService, private router: Router,
-    private toastr: ToastrService) { }
+  constructor(private accountService: AccountService, private userService: UserService, private adminService: AdminService, private router: Router, private toastr: ToastrService, private spinner: NgxSpinnerService) { }
 
   ngOnInit(): void {
 
-    setTimeout(() => this.showContent = true, 500)
+    this.spinner.show();
     this.getSubscriptions();
     this.adminService.getUsers()
 
@@ -88,7 +88,14 @@ export class RegistrationComponent implements OnInit {
     this.accountService.getAvailableSubscription().subscribe({
 
       next: (response) => this.subscriptions = response,
-      complete: () => this.initializeRegistrationForm()
+
+      complete: () => {
+
+        this.spinner.hide();
+        this.showContent = true;
+        this.initializeRegistrationForm()
+
+      }
 
     });
 

@@ -53,7 +53,7 @@
                     <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu"
                         aria-labelledby="button-basic">
                         <li role="menuitem">
-                            <a class="dropdown-item" href="/user/details/{{user.id}}">My account</a>
+                            <a class="dropdown-item" href="/user/edit/{{user.id}}">My account</a>
                         </li>
                         <li role="menuitem" *ngIf="user.role !='Admin'">
                             <a class="dropdown-item" href="/user/reset-password/{{user.id}}">Reset password</a>

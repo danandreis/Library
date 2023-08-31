@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BookService } from 'src/app/_services/book.service';
 
 @Component({
   selector: 'app-borrows',
@@ -7,7 +9,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BorrowsComponent implements OnInit {
 
-  constructor() { }
+  bsModalRef: BsModalRef = new BsModalRef();
+
+  constructor(private modalSevice: BsModalService, private bookService: BookService) { }
 
   ngOnInit(): void {
   }

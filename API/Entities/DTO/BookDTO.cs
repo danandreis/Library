@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace API.Entities.DTO
 {
     public class BookDTO
@@ -18,6 +13,8 @@ namespace API.Entities.DTO
         public string Description { get; set; }
         public decimal Rating { get; set; }
         public string PictureLink { get; set; }
+
+        public List<BookBorrowDTO> BookBorrows { get; set; }
 
         public BookDomain BookDomain { get; set; }
 

@@ -19,6 +19,7 @@ namespace API.Data.Services
         Task<Book> AddBook(Book book);
         Task<Book> UpdateBook(Book book);
         Task<Book> DeleteBook(string id);
+        Task<BookBorrow> addBorrowedBook(BookBorrow bookBorrow);
 
     }
 }

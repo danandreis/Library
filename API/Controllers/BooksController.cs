@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using API.Data.Services;
 using API.Entities;
 using API.Entities.DTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
@@ -25,7 +19,8 @@ namespace API.Controllers
         public async Task<IEnumerable<BookDTO>> GetBooks()
         {
 
-            return await _bookService.GetBooks();
+            var result = await _bookService.GetBooks();
+            return result;
         }
 
         [HttpGet("{id}")]
@@ -73,6 +68,20 @@ namespace API.Controllers
 
         }
 
+        [HttpPost("addBorrow")]
+        public async Task<ActionResult<BookBorrow>> addBorrow(BookBorrow bookBorrow)
+        {
+
+            bookBorrow.Id = Guid.NewGuid().ToString();
+
+            var borrowedBook = await _bookService.addBorrowedBook(bookBorrow);
+
+            if (borrowedBook == null) return BadRequest("There was an error on registering the borrow!");
+
+            return borrowedBook;
+        }
+
+
         [HttpPut]
         public async Task<ActionResult<Book>> UpdateBook(Book book)
         {
@@ -91,7 +100,7 @@ namespace API.Controllers
 
             var result = await _bookService.DeleteBook(id);
 
-            if (result == null) return BadRequest("There wa an error when deleting the selected book");
+            if (result == null) return BadRequest("There was an error when deleting the selected book");
 
             return result;
         }

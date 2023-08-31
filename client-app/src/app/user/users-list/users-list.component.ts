@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { NewPassord } from 'src/app/_models/NewPassword';
 import { User } from 'src/app/_models/User';
@@ -17,9 +18,11 @@ export class UsersListComponent implements OnInit {
   userRole: string = 'All'
   valueToSearch: string = ''
 
-  constructor(public adminService: AdminService, public accountService: AccountService, private router: Router, private toastr: ToastrService) { }
+  constructor(public adminService: AdminService, public accountService: AccountService, private router: Router, private toastr: ToastrService, private spinner: NgxSpinnerService) { }
 
   ngOnInit(): void {
+
+    this.spinner.show();
 
     this.adminService.getUsers()
 
@@ -72,6 +75,8 @@ export class UsersListComponent implements OnInit {
 
           }
 
+          this.spinner.hide();
+          
           return this.users;
 
         },
@@ -125,7 +130,7 @@ export class UsersListComponent implements OnInit {
 
   editUser(id: string) {
 
-    this.router.navigate(['user/details/', id])
+    this.router.navigate(['user/edit/', id])
   }
 
   resetPassword(id: string) {

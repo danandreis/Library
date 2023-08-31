@@ -78,10 +78,12 @@ namespace API.Data.Services
         public async Task<IEnumerable<BookDTO>> GetBooks()
         {
 
-            var result = await _context.Books.Include(b => b.BookDomain).Include(b => b.BookType).
-                            Include(b => b.BookLanguage).ToListAsync();
+            var result = await _context.Books.OrderBy(b => b.Title).Include(b => b.BookDomain).
+                            Include(b => b.BookType).Include(b => b.BookLanguage).Include(b => b.BookBorrows).ThenInclude(bb => bb.AppUser).ToListAsync();
 
-            return _mapper.Map<IEnumerable<BookDTO>>(result);
+            var resultToSend = _mapper.Map<IEnumerable<BookDTO>>(result);
+
+            return resultToSend;
         }
 
         public async Task<IEnumerable<BookDomain>> GetDomains()
@@ -100,6 +102,21 @@ namespace API.Data.Services
         {
 
             return await _context.BookTypes.ToListAsync();
+
+        }
+
+        public async Task<BookBorrow> addBorrowedBook(BookBorrow bookBorrow)
+        {
+
+            if (bookBorrow == null) return null;
+
+            await _context.BookBorrows.AddAsync(bookBorrow);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (!result) return null;
+
+            return bookBorrow;
 
         }
     }

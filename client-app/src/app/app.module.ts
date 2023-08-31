@@ -23,6 +23,7 @@ import { ResetPasswordComponent } from './user/reset-password/reset-password.com
 import { BookCardComponent } from './books/book-card/book-card.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { EditComponent } from './user/edit/edit.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     NewBookComponent,
     ListBookComponent,
     ResetPasswordComponent,
-    BookCardComponent
+    BookCardComponent,
+    EditComponent
   ],
   imports: [
     BrowserModule,

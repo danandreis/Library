@@ -14,6 +14,7 @@ import { NgxSpinnerService } from "ngx-spinner";
   templateUrl: './new-book.component.html',
   styleUrls: ['./new-book.component.css']
 })
+
 export class NewBookComponent implements OnInit {
 
   newBookForm: FormGroup = new FormGroup({})
