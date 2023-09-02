@@ -79,7 +79,10 @@ namespace API.Data.Services
         {
 
             var result = await _context.Books.OrderBy(b => b.Title).Include(b => b.BookDomain).
-                            Include(b => b.BookType).Include(b => b.BookLanguage).Include(b => b.BookBorrows).ThenInclude(bb => bb.AppUser).ToListAsync();
+                                Include(b => b.BookLanguage).Include(b => b.BookType).
+                                Include(b => b.BookBorrows).ThenInclude(bb => bb.AppUser).
+                                Include(b => b.BookReservations).ThenInclude(br => br.AppUser).
+                                ToListAsync();
 
             var resultToSend = _mapper.Map<IEnumerable<BookDTO>>(result);
 
@@ -119,5 +122,7 @@ namespace API.Data.Services
             return bookBorrow;
 
         }
+
+
     }
 }

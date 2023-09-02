@@ -16,6 +16,8 @@ namespace API.Entities.DTO
 
         public List<BookBorrowDTO> BookBorrows { get; set; }
 
+        public List<BookReservationDTO> BookReservations { get; set; }
+
         public BookDomain BookDomain { get; set; }
 
         public BookLanguage BookLanguage { get; set; }

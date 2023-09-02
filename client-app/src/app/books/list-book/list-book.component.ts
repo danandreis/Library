@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Book } from 'src/app/_models/Book';
 import { BookService } from 'src/app/_services/book.service';
 import { NgxSpinnerService } from "ngx-spinner";
-import { BorrowService } from 'src/app/_services/borrow.service';
 import { LoginUser } from 'src/app/_models/User';
 import { AccountService } from 'src/app/_services/account.service';
 import { take } from 'rxjs';
@@ -80,7 +79,7 @@ export class ListBookComponent implements OnInit {
 
     if (event) this.router.navigateByUrl('/', { skipLocationChange: true }).
       then(() => this.router.navigateByUrl('books/list'))
-  } 
+  }
 
   getBooksList(title: string, author: string, domain: string) {
 

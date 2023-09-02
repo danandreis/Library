@@ -16,6 +16,14 @@ namespace API.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IEnumerable<BorrowsDTO>> getBorrowedBooks()
+        {
+
+            return await _borrowService.getBorrowedBooks();
+
+        }
+
         [HttpPost]
         public async Task<ActionResult<BookBorrow>> addBorrow(BookBorrow bookBorrow)
         {

@@ -5,6 +5,7 @@ import { LoginUser, User } from '../_models/User';
 import { UserSubscription } from '../_models/UserSubscription';
 import { NewPassord } from '../_models/NewPassword';
 import { BorrowService } from './borrow.service';
+import { ReserveService } from './reserve.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class AccountService {
   user$ = this.userSource.asObservable();
   rolesList: any = {};
 
-  constructor(private http: HttpClient, private borrowService: BorrowService) { }
+  constructor(private http: HttpClient, private borrowService: BorrowService, private reserveService: ReserveService) { }
 
   login(user: User) {
 
@@ -29,6 +30,7 @@ export class AccountService {
           localStorage.setItem('loginUserName', JSON.stringify(response));
           this.userSource.next(response);
           this.borrowService.userHasBorrowedBooks = false;
+          this.reserveService.userHasReservedBooks = false;
           return response;
 
         }

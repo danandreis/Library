@@ -6,7 +6,6 @@ import { BookType } from '../_models/BookType';
 import { Book } from '../_models/Book';
 import { BehaviorSubject } from 'rxjs';
 import { BorrowService } from './borrow.service';
-import { BorrowedBook } from '../_models/BorrowedBook';
 
 @Injectable({
   providedIn: 'root'

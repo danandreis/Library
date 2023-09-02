@@ -6,6 +6,7 @@ namespace API.Data.Services
     public interface IBorrowService
     {
 
+        Task<IEnumerable<BorrowsDTO>> getBorrowedBooks();
         Task<BookBorrow> addBorrowedBook(BookBorrow bookBorrow);
         Task<string> extendBorrow(BorrowDTO extendBorrowDTO);
 

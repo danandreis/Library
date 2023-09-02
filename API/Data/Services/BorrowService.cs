@@ -18,6 +18,27 @@ namespace API.Data.Services
 
         }
 
+        public async Task<IEnumerable<BorrowsDTO>> getBorrowedBooks()
+        {
+
+            var borrowsList = await _context.Books.Join(_context.BookBorrows, b => b.Id, bb => bb.BookId, (b, bb) => new BorrowsDTO
+            {
+                Id = bb.Id,
+                Title = b.Title,
+                Author = b.Author,
+                BookId = bb.BookId,
+                AppUser = bb.AppUser,
+                StartDate = bb.StartDate,
+                EndDate = bb.EndDate,
+                ReturnDate = bb.ReturnDate,
+                DelayTime = bb.DelayTime,
+                Extended = bb.Extended
+            }).ToListAsync();
+
+            return borrowsList;
+
+        }
+
         public async Task<BookBorrow> addBorrowedBook(BookBorrow bookBorrow)
         {
 

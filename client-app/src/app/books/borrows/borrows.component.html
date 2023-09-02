@@ -1,1 +1,69 @@
+<div class="row">
+    <h2 class="col-md-12 text-center text-info fw-bold">
+        Borrowed books list
+    </h2>
+    <div class="col-md-12">
+        <table class="table mt-5 border">
+            <tr>
+                <th>Book</th>
+                <th>Author</th>
+                <th *ngIf="user?.role == 'Employee'">Borrower</th>
+                <th>Date Start</th>
+                <th>Date End</th>
+                <th>Delay</th>
+                <th *ngIf="user!.role == 'Employee'">Return date</th>
+                <th class="text-center">Options</th>
+            </tr>
+            <tr *ngFor="let borrowedbook of booksList">
+                <td>{{borrowedbook.title}}</td>
+                <td>{{borrowedbook.author}}</td>
+                <td *ngIf="user!.role == 'Employee'">
+                    {{borrowedbook.appUser!.name}}
+                </td>
+                <td>{{borrowedbook.startDate | date:'dd.MM.YYYY'}}</td>
+                <td>{{borrowedbook.endDate | date:'dd.MM.YYYY'}}</td>
+                <td *ngIf="!borrowedbook.delayTime">
+                    {{borrowedbook.delayTime}} day(s)
+                </td>
+                <td *ngIf="borrowedbook.delayTime" style="color:red">
+                    {{borrowedbook.delayTime}} day(s)
+                </td>
+                <td *ngIf="user!.role == 'Employee'">
+                    <ng-container *ngIf="!borrowedbook.returnDate">
+                        Not returned
+                    </ng-container>
+                    {{borrowedbook.returnDate | date: 'dd.MM.YYYY'}}
+                </td>
+                <td class="text-center">
+                    <input *ngIf="user!.role == 'User' && borrowedbook.extended !=1" class="btn btn-outline-success"
+                        type="submit" value="Extend borrow" (click)="extend(borrowedbook,extensionNotification)" />
+                    <input *ngIf="user!.role == 'Employee' && borrowedbook.returnDate == null"
+                        class=" btn btn-outline-success" type="submit" value="Return book"
+                        (click)="returnBook(borrowedbook)" />
+                    <div *ngIf="user!.role == 'Employee' && borrowedbook.returnDate != null" class="fw-bold"
+                        style="color:green">
+                        Returned
+                    </div>
+                </td>
 
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<ng-template #extensionNotification>
+    <div class="modal-header text-center">You choose to extend pe borrow for:</div>
+    <div class="text-center fw-bold ">{{title}} by {{author}}</div>
+    <div class="modal-body text-center">
+        <p>Duration: <span class="text-center fw-bold">1 week</span></p>
+        <p>End date: <span class="text-center fw-bold">{{extendDateEnd | date:'dd.MM.YYYY'}}</span></p>
+        <p>{{message}}</p>
+        <p style="color: red;">
+            <i class="fa fa-warning"></i>
+            You are allowed to extend the borrow just one time!
+        </p>
+        <button type="button" class="btn btn-outline-success me-3" (click)="confirmBorrowExtension()">Confirm</button>
+        <button type="button" class="btn btn-outline-primary" (click)="modalService.hide()">Cancel</button>
+    </div>
+</ng-template>

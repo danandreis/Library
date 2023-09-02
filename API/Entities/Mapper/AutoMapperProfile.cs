@@ -25,6 +25,12 @@ namespace API.Entities.Mapper
             CreateMap<BookBorrowDTO, BookBorrow>();
             CreateMap<BookBorrow, BookBorrow>();
 
+            CreateMap<BookReservation, BookReservationDTO>();
+            CreateMap<BookReservationDTO, BookReservation>();
+            CreateMap<BookReservation, BookReservation>();
+
+            CreateMap<BorrowsDTO,BorrowsDTO>();
+
 
         }
 

@@ -2,6 +2,7 @@ import { BookDomain } from "./BookDomain";
 import { BookLanguage } from "./BookLanguage";
 import { BookType } from "./BookType";
 import { BorrowedBook } from "./BorrowedBook";
+import { ReservedBook } from "./ReservedBook";
 
 export interface Book {
 
@@ -20,8 +21,11 @@ export interface Book {
     bookTypeId: string,
     bookType: BookType,
     bookBorrows: BorrowedBook[],
+    bookReservations: ReservedBook[],
     description: string,
     rating: number,
     isBorrowedByUser: boolean,
-    isBorrowedByOther: boolean
+    isBorrowedByOther: boolean,
+    isReservedByUser: boolean,
+
 }

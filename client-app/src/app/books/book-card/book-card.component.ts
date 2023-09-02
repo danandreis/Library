@@ -9,6 +9,8 @@ import { BorrowedBook } from 'src/app/_models/BorrowedBook';
 import { take } from 'rxjs';
 import { BorrowService } from 'src/app/_services/borrow.service';
 import { LoginUser } from 'src/app/_models/User';
+import { ReservedBook } from 'src/app/_models/ReservedBook';
+import { ReserveService } from 'src/app/_services/reserve.service';
 
 @Component({
   selector: 'app-book-card',
@@ -20,8 +22,11 @@ export class BookCardComponent implements OnInit {
 
   @Input() book: Book | undefined;
   @Output() newBorrow = new EventEmitter();
+  @Output() newReservation = new EventEmitter();
 
   borrowedBook: BorrowedBook | undefined;
+  reservedBook: ReservedBook | undefined;
+
   bsModalRef: BsModalRef = new BsModalRef();
   title: string = ''
   author: string = '';
@@ -30,12 +35,17 @@ export class BookCardComponent implements OnInit {
   startBorrowDate: Date | undefined = undefined;
   endBorrowDate: Date | undefined = undefined;
 
+  startReservationDate: Date | undefined = undefined;
+  endReservationDate: Date | undefined = undefined;
+  reservationsCount: number = 0;
+
   message: string = '';
   bookId: string = ''
   user: LoginUser | undefined
 
   constructor(private router: Router, private bookService: BookService, private toastr: ToastrService,
-    private modalService: BsModalService, private accountService: AccountService, public borrowService: BorrowService) {
+    private modalService: BsModalService, private accountService: AccountService, public borrowService: BorrowService,
+    public reserveService: ReserveService) {
 
     this.borrowedBook = {
       id: '',
@@ -48,6 +58,18 @@ export class BookCardComponent implements OnInit {
       returnDate: null,
       delayTime: 0,
       extended: 0
+
+    }
+
+    this.reservedBook = {
+      id: '',
+      bookId: '',
+      title:'',
+      author:'',
+      appUserId: '',
+      appUser: null,
+      startDate: new Date(),
+      endDate: new Date()
 
     }
 
@@ -85,6 +107,27 @@ export class BookCardComponent implements OnInit {
 
       this.book!.isBorrowedByUser = false;
       this.book!.isBorrowedByOther = false;
+
+    }
+
+    if (this.user?.role == 'User' && this.book?.bookReservations.length != 0) {
+
+      if (this.book!.bookReservations[0]?.appUser?.id == this.user?.id) {
+
+        this.book!.isReservedByUser = true;
+        this.reserveService.userHasReservedBooks = true;
+
+      }
+      else {
+
+        this.book!.isReservedByUser = false;
+
+      }
+
+    }
+    else {
+
+      this.book!.isReservedByUser = false;
 
     }
 
@@ -153,11 +196,6 @@ export class BookCardComponent implements OnInit {
   }
 
 
-  declineDeletion(): void {
-
-    this.bsModalRef.hide()
-  }
-
   confirmBorrow(): void {
 
     this.borrowedBook!.bookId = this.bookId;
@@ -189,9 +227,65 @@ export class BookCardComponent implements OnInit {
 
   }
 
-  declineBorrow(): void {
+  reserveBook(book: Book, template: TemplateRef<any>) {
+
+    this.title = book.title;
+    this.author = book.author;
+    this.message = 'Please confirm!'
+    this.startReservationDate = new Date();
+    this.endReservationDate = new Date();
+
+    this.reserveService.checkReservation(book.id).subscribe({
+
+      next: (reservations) => {
+
+        if (reservations.length != 0) {
+
+          this.reservationsCount = reservations.length;
+          this.startReservationDate!.setDate(new Date(reservations.at(0)!.endDate).getDate() + 1)
+
+        }
+
+      },
+
+      complete: () => {
+
+        if (this.startReservationDate!.getDay() == 0)
+          this.startReservationDate!.setDate(this.startReservationDate!.getDate() + 1)
+
+        if (this.startReservationDate!.getDay() == 6)
+          this.startReservationDate!.setDate(this.startReservationDate!.getDate() + 2)
+
+        this.endReservationDate!.setDate(this.startReservationDate!.getDate() + 7);
+
+        this.bsModalRef = this.modalService.show(template);
+
+        this.bookId = book.id;
+
+      }
+
+    })
+
+  }
+
+  confirmReservation(): void {
+
+    this.reservedBook!.bookId = this.bookId;
+    this.reservedBook!.appUserId = this.user?.id!;
+    this.reservedBook!.startDate = this.startReservationDate!;
+    this.reservedBook!.endDate = this.endReservationDate!;
 
     this.bsModalRef.hide();
+
+    this.reserveService.addReservation(this.reservedBook!).subscribe({
+
+      next: () => this.toastr.success("The reservation has been registered successfully!"),
+      error: (error) => this.toastr.error(error.error)
+
+    })
+
+    this.newReservation.emit(true);
+
 
   }
 }

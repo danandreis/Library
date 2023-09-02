@@ -29,8 +29,7 @@ const routes: Routes = [
       { path: 'books/borrowed', component: BorrowsComponent },                  //Borrowed books component
       { path: 'books/reservations', component: ReservationsComponent },         //Reserved books component
       { path: 'books/list', component: ListBookComponent },                     //List of all books available
-
-      { path: 'user/myBooks', component: UserBooksComponent },            //Borrowed or reserved books for specified client
+      
       { path: 'user/edit/:id', component: EditComponent },                          // Edit user acoount info
       { path: 'user/reset-password/:id', component: ResetPasswordComponent },        //Reset of user password
 

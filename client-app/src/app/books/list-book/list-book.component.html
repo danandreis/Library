@@ -30,6 +30,7 @@
         </div>
     </div>
     <div class="col-md-4 mt-3" *ngFor="let book of books">
-        <app-book-card [book]="book" (newBorrow)="refreshBookList($event)"></app-book-card>
+        <app-book-card [book]="book" (newBorrow)="refreshBookList($event)"
+            (newReservation)="refreshBookList($event)"></app-book-card>
     </div>
 </div>

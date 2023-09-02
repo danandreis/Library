@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BorrowedBook } from '../_models/BorrowedBook';
 import { BehaviorSubject } from 'rxjs';
+import { Book } from '../_models/Book';
+import { Borrow } from '../_models/Borrow';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +11,9 @@ import { BehaviorSubject } from 'rxjs';
 
 export class BorrowService {
 
-  baseUrl = 'https://localhost:5001/api/'
-  borrowedBooksList = new BehaviorSubject<BorrowedBook[]>([]);
-  borrowedBooksList$ = this.borrowedBooksList.asObservable();
+  baseUrl = 'https://localhost:5001/api/';
 
-  //Check if user has already borerow a book. An user can borrow only one book once
+  //Check if user has borrowed already a book. An user can borrow only one book once
   userHasBorrowedBooks = false;
 
   constructor(private http: HttpClient) { }
@@ -32,8 +32,13 @@ export class BorrowService {
 
   returnBorrowedBook(id: string, newDate: Date) {
 
-    console.log(id);
     return this.http.put(this.baseUrl + "borrows/returnBook", { id, newDate })
+  }
+
+  getBorrowedBooks() {
+
+    return this.http.get<Borrow[]>(this.baseUrl + 'borrows')
+
   }
 
 }
