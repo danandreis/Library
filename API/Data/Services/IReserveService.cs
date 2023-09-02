@@ -8,6 +8,7 @@ namespace API.Data.Services
 
         Task<IEnumerable<ReservationDTO>> getReservations();
         Task<BookReservation> addReservation(BookReservation reservation);
+        Task<IEnumerable<BookReservation>> getReservationByBook(string id);
         Task<bool> cancelReservation(string bokoId);
 
     }

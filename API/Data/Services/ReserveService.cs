@@ -58,5 +58,14 @@ namespace API.Data.Services
             throw new NotImplementedException();
         }
 
+        public async Task<IEnumerable<BookReservation>> getReservationByBook(string id)
+        {
+
+            return await _context.BookReservations.Where(r => r.BookId == id).
+                        OrderByDescending(r => r.EndDate).ToListAsync();
+
+        }
+
+
     }
 }

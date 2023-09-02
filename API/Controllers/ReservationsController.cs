@@ -1,7 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using API.Data.Services;
 using API.Entities;
 using API.Entities.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
@@ -23,6 +29,13 @@ namespace API.Controllers
 
             return await _reserveService.getReservations();
 
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IEnumerable<BookReservation>> getReservationByBook(string id)
+        {
+
+            return await _reserveService.getReservationByBook(id);
         }
 
         [HttpPost]
