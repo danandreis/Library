@@ -24,6 +24,14 @@ namespace API.Controllers
 
         }
 
+        [HttpGet("isBookBorrowed/{id}")]
+        public async Task<bool> isBookBorrowed(string id)
+        {
+
+            return await _borrowService.bookIsBorrowed(id);
+
+        }
+
         [HttpPost]
         public async Task<ActionResult<BookBorrow>> addBorrow(BookBorrow bookBorrow)
         {

@@ -4,7 +4,7 @@ import { User } from "./User";
 export interface ReservedBook {
 
 
-    id: string,
+    id: string, //reservationID
     bookId: string,
     title: string,
     author: string,

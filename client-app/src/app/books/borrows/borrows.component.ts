@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -28,7 +29,15 @@ export class BorrowsComponent implements OnInit {
   selectedborrowId: string = '';
   endborrowDate: Date = new Date();
 
+  intervalMaxDate = new Date();
+
   bsModalRef: BsModalRef = new BsModalRef();
+  bsDateTimeConfig?: Partial<BsDatepickerConfig>
+
+  searchUserName = '';
+  searchStartDate = new Date('01/01/1970');
+  searchEndDate = new Date('01/01/2100')
+  searchReturned = false;
 
   constructor(private router: Router, private accountService: AccountService, private spinner: NgxSpinnerService, public modalService: BsModalService, private borrowService: BorrowService,
     private toastr: ToastrService) { }
@@ -43,43 +52,71 @@ export class BorrowsComponent implements OnInit {
 
     })
 
-    this.displayBorrowedBooks();
+    if (this.user?.role == 'User')
+      this.borrowService.getBorrowedBooks(this.user!.id);
+    else
+      this.borrowService.getBorrowedBooks('');
+
+    this.displayBorrowedBooks(this.searchUserName, this.searchStartDate, this.searchEndDate!, this.searchReturned);
 
   }
 
-  displayBorrowedBooks() {
+  displayBorrowedBooks(userName: string, startDate: Date, endDate: Date, returned: boolean) {
 
-    this.borrowService.getBorrowedBooks().subscribe({
+    this.borrowService.borrowedBooks$.subscribe({
 
       next: (list) => {
 
-        if (this.user?.role == 'User')
-          this.booksList = list.filter(borrow => borrow.appUser.id == this.user?.id);
-        else
-          this.booksList = list;
+        if (userName !== '') {
+
+          this.booksList = []
+
+          list.forEach(book => {
+
+            var regexUserName = new RegExp(userName, 'i');
+            var result = regexUserName.test(book.appUser.name)
+
+            if (result)
+              this.booksList.push(book)
+
+          })
+
+          if (returned) this.booksList = this.booksList.filter(b => b.returnDate != null)
+
+          this.booksList = this.booksList.filter(b => (new Date(b.startDate!) >= new Date(startDate) &&
+            (new Date(b.endDate!) <= new Date(endDate))))
+
+        }
+        else {
+
+          this.booksList = list
+
+          if (returned) this.booksList = this.booksList.filter(b => b.returnDate != null)
+
+          this.booksList = this.booksList.filter(b => (new Date(b.startDate!) >= new Date(startDate) &&
+            (new Date(b.endDate!) <= new Date(endDate))))
+
+        }
+
 
         this.booksList.forEach(bb => {
 
-          bb.startDate = new Date(bb.startDate + 'Z')
-          bb.endDate = new Date(bb.endDate + 'Z')
+          if (bb.returnDate == null) {
+            
+            var today = new Date()
 
-          if (bb.returnDate != null)
-            bb.returnDate = new Date(bb.returnDate + 'Z')
+            if (bb.endDate! < today)
+              bb.delayTime = this.getDelayedTime(today, bb.endDate!)
 
-          var today = new Date()
+          }
 
-          if (bb.endDate < today)
-            bb.delayTime = this.getDelayedTime(today, bb.endDate)
         })
-      },
-      complete: () => {
-
-        this.spinner.hide();
-
-        return this.booksList
-
       }
     })
+
+    this.spinner.hide();
+
+    return this.booksList
 
   }
 
@@ -138,6 +175,42 @@ export class BorrowsComponent implements OnInit {
       error: (error) => this.toastr.error(error.error)
 
     })
+
+  }
+
+  searchByUserName(event: any) {
+
+    this.searchUserName = event.target.value;
+    this.displayBorrowedBooks(this.searchUserName, this.searchStartDate, this.searchEndDate!, this.searchReturned);
+
+  }
+
+  searchByStartDate(event: any) {
+
+    if (event == undefined)
+      this.searchStartDate = new Date('01/01/1970')
+    else
+      this.searchStartDate = new Date(event);
+
+    this.displayBorrowedBooks(this.searchUserName, this.searchStartDate, this.searchEndDate!, this.searchReturned);
+
+  }
+
+  searchByEndDate(event: any) {
+
+    if (event == undefined)
+      this.searchEndDate = new Date('01/01/2100')
+    else
+      this.searchEndDate = new Date(event);
+
+    this.displayBorrowedBooks(this.searchUserName, this.searchStartDate, this.searchEndDate!, this.searchReturned);
+
+  }
+
+  searchByStatus(event: any) {
+
+    this.searchReturned = event.target.checked
+    this.displayBorrowedBooks(this.searchUserName, this.searchStartDate, this.searchEndDate!, this.searchReturned);
 
   }
 }

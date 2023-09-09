@@ -11,15 +11,17 @@
                                 <a class="nav-link" routerLink="/books/new">New book</a>
                             </li>
                         </ng-container>
-                        <li class="nav-item">
-                            <a class="nav-link" routerLink="/books/list"> Books list</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" routerLink="/books/borrowed">Borrowed books </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" routerLink="/books/reservations">Reserved books </a>
-                        </li>
+                        <ng-container  *ngIf="accountService.hasUserRole() || accountService.hasEmployeeRole()">
+                            <li class="nav-item">
+                                <a class="nav-link" routerLink="/books/list"> Books list</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" routerLink="/books/borrowed">Borrowed books </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" routerLink="/books/reservations">Reserved books </a>
+                            </li>
+                        </ng-container>
                         <ng-container *ngIf="accountService.hasAdminRole()">
                             <li role="nav-item">
                                 <a class="nav-link" href="/user/registration">New user</a>

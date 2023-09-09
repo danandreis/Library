@@ -31,4 +31,10 @@ export class ReserveService {
     return this.http.get<ReservedBook[]>(this.baseUrl + 'reservations')
 
   }
+
+  cancelReservation(bookId: string) {
+
+    return this.http.delete<boolean>(this.baseUrl + `reservations/${bookId}`);
+
+  }
 }

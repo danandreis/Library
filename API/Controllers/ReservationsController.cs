@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using API.Data.Services;
 using API.Entities;
 using API.Entities.DTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
@@ -48,6 +42,17 @@ namespace API.Controllers
 
             return Ok(reservation);
 
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> cancelReservation(string id)
+        {
+
+            var result = await _reserveService.cancelReservation(id);
+
+            if (!result) return BadRequest("There was a problem when canceling reservation!");
+
+            return Ok(result);
         }
 
     }

@@ -2,6 +2,7 @@
     <h2 class="col-md-12 text-center text-info fw-bold">
         Reserved books list
     </h2>
+    <ngx-spinner type="timer" style="color:#fff">Loading...</ngx-spinner>
     <div class="col-md-12">
         <table class="table mt-5 border">
             <tr>
@@ -21,11 +22,53 @@
                 <td>{{reservedBook.startDate | date:'dd.MM.YYYY'}}</td>
                 <td>{{reservedBook.endDate | date:'dd.MM.YYYY'}}</td>
 
-                <td class="text-center">
+                <td class="text-center" *ngIf="user!.role =='User'">
+                    <input type="submit" class="btn btn-outline-danger" value="Cancel"
+                        (click)="cancelReservation(reservedBook, cancelReservationNotification)" />
+                </td>
 
+                <td class="text-center" *ngIf="user!.role =='Employee'">
+                    <input type="submit" class="btn btn-outline-success" value="Lend Book"
+                        *ngIf="availableBook.get(reservedBook.id)"
+                        (click)="lendBook(reservedBook, lendBookNotification)" />
                 </td>
 
             </tr>
         </table>
     </div>
 </div>
+
+<ng-template #cancelReservationNotification>
+    <div class="modal-header text-center">You choose to cancel the reservation for:</div>
+    <div class="text-center fw-bold ">{{bookTitle}} by {{bookAuthor}}</div>
+    <div class="modal-body text-center">
+        <button type="button" class="btn btn-outline-success me-3" (click)="confirmCancelReservation()">
+            Yes
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="bsModalRef.hide()">Cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #borrowNotification>
+    <div class="modal-header text-center">Borrow book</div>
+    <div class="modal-body text-center fw-bold">
+        <i class="fa fa-warning fa-3x" style="color:red"></i>
+        You can not borrow another book becaue you have already a borrowed book. <br>
+        Return the borrowed book and borrow again!
+    </div>
+    <div class="modal-body text-center">
+        <button type="button" class="btn btn-outline-primary" (click)="bsModalRef.hide()">Ok</button>
+    </div>
+</ng-template>
+
+<ng-template #lendBookNotification>
+    <div class="modal-header text-center">Lend book</div>
+    <div class="modal-body text-center">
+        <i class="fa fa-warning fa-3x" style="color:green"></i>
+        The book <b>{{bookTitle}}</b> by <b>{{bookAuthor}}</b> has been lend until 
+        <b>{{lendEndDate | date:'dd.MM.YYYY'}}</b>
+    </div>
+    <div class="modal-body text-center">
+        <button type="button" class="btn btn-outline-primary" (click)="confirmLend()">Ok</button>
+    </div>
+</ng-template>

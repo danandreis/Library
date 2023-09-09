@@ -27,5 +27,6 @@ export interface Book {
     isBorrowedByUser: boolean,
     isBorrowedByOther: boolean,
     isReservedByUser: boolean,
+    isReservedByOther: boolean
 
 }

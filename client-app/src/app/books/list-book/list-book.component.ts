@@ -41,6 +41,7 @@ export class ListBookComponent implements OnInit {
 
       }
     })
+    
     this.accountService.user$.pipe(take(1)).subscribe({
 
       next: (u) => this.user = u!
@@ -75,7 +76,7 @@ export class ListBookComponent implements OnInit {
 
   }
 
-  refreshBookList(event: boolean) {
+    refreshBookList(event: boolean) {
 
     if (event) this.router.navigateByUrl('/', { skipLocationChange: true }).
       then(() => this.router.navigateByUrl('books/list'))

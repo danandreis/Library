@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BorrowedBook } from '../_models/BorrowedBook';
 import { BehaviorSubject } from 'rxjs';
-import { Book } from '../_models/Book';
 import { Borrow } from '../_models/Borrow';
 
 @Injectable({
@@ -12,6 +11,8 @@ import { Borrow } from '../_models/Borrow';
 export class BorrowService {
 
   baseUrl = 'https://localhost:5001/api/';
+  borrowedBooks = new BehaviorSubject<Borrow[]>([])
+  borrowedBooks$ = this.borrowedBooks.asObservable()
 
   //Check if user has borrowed already a book. An user can borrow only one book once
   userHasBorrowedBooks = false;
@@ -32,13 +33,47 @@ export class BorrowService {
 
   returnBorrowedBook(id: string, newDate: Date) {
 
-    return this.http.put(this.baseUrl + "borrows/returnBook", { id, newDate })
+    this.userHasBorrowedBooks = false;
+    return this.http.put(this.baseUrl + "borrows/returnBook", { id, newDate });
+
   }
 
-  getBorrowedBooks() {
+  setHasBorrowedBooks(status: boolean) {
 
-    return this.http.get<Borrow[]>(this.baseUrl + 'borrows')
+    this.userHasBorrowedBooks = status;
+  }
 
+  getBorrowedBooks(userId: string) {
+
+    this.userHasBorrowedBooks = false;
+
+    this.http.get<Borrow[]>(this.baseUrl + 'borrows').subscribe({
+
+      next: (list) => {
+
+        if (userId != '') {
+
+          this.borrowedBooks.next(list.filter(book => book.appUser.id == userId))
+
+        }
+        else
+          this.borrowedBooks.next(list)
+
+        list.forEach(bb => {
+
+          bb.startDate = new Date(bb.startDate + 'Z')
+          bb.endDate = new Date(bb.endDate + 'Z')
+
+        })
+
+      }
+    })
+
+  }
+
+  isBookBorrowed(bookId: string) {
+
+    return this.http.get<boolean>(this.baseUrl + `borrows/isBookBorrowed/${bookId}`);
   }
 
 }

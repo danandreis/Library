@@ -64,8 +64,8 @@ export class BookCardComponent implements OnInit {
     this.reservedBook = {
       id: '',
       bookId: '',
-      title:'',
-      author:'',
+      title: '',
+      author: '',
       appUserId: '',
       appUser: null,
       startDate: new Date(),
@@ -84,50 +84,65 @@ export class BookCardComponent implements OnInit {
 
     })
 
+    //Check books reserved by logged in user or by other user
     this.book!.bookBorrows = this.book?.bookBorrows.filter(bb => bb.returnDate == null)!;
 
-    if (this.user?.role == 'User' && this.book?.bookBorrows.length != 0) {
+    if (this.user?.role == 'User') {
 
-      if (this.book!.bookBorrows[0]?.appUser?.id == this.user?.id) {
+      if (this.book?.bookBorrows.length == 0) {
 
-        this.book!.isBorrowedByUser = true;
-        this.borrowService.userHasBorrowedBooks = true;
+        this.book!.isBorrowedByUser = false;
         this.book!.isBorrowedByOther = false;
 
       }
       else {
+        var userBorrows = this.book?.bookBorrows.filter(b => b.appUser?.id == this.user?.id);
 
-        this.book!.isBorrowedByUser = false;
-        this.book!.isBorrowedByOther = true;
+        if (userBorrows?.length == 1) {
 
+          this.book!.isBorrowedByUser = true;
+          this.borrowService.userHasBorrowedBooks = true;
+          this.book!.isBorrowedByOther = false;
+
+        }
+        else {
+
+          this.book!.isBorrowedByUser = false;
+          this.book!.isBorrowedByOther = true;
+
+        }
       }
 
     }
-    else {
 
-      this.book!.isBorrowedByUser = false;
-      this.book!.isBorrowedByOther = false;
+    //Check books reserved by User
+    if (this.user?.role == 'User') {
 
-    }
 
-    if (this.user?.role == 'User' && this.book?.bookReservations.length != 0) {
+      if (this.book?.bookReservations.length == 0) {
 
-      if (this.book!.bookReservations[0]?.appUser?.id == this.user?.id) {
-
-        this.book!.isReservedByUser = true;
-        this.reserveService.userHasReservedBooks = true;
+        this.book.isReservedByUser = false;
+        this.book.isReservedByOther = false;
 
       }
       else {
 
-        this.book!.isReservedByUser = false;
+        var userReservations = this.book?.bookReservations.filter(b => b.appUser?.id == this.user?.id)
 
+        if (userReservations?.length! == 1) {
+
+          this.book!.isReservedByUser = true;
+          this.book!.isReservedByOther = false;
+          this.reserveService.userHasReservedBooks = true;
+
+        }
+        else {
+
+          this.book!.isReservedByUser = false;
+          this.book!.isReservedByOther = true;
+
+        }
       }
-
-    }
-    else {
-
-      this.book!.isReservedByUser = false;
 
     }
 
@@ -141,37 +156,46 @@ export class BookCardComponent implements OnInit {
 
   deleteBook(book: Book, template: TemplateRef<any>) {
 
-    this.title = book.title
-    this.message = 'Are you sure ?'
-    this.bsModalRef = this.modalService.show(template);
-    this.bookId = book.id;
+
+    if (book.bookReservations.length != 0 || book.bookBorrows.length != 0) {
+
+      this.toastr.error("You can not delete a reserved or borrowed book!")
+
+    }
+    else {
+
+      this.title = book.title
+      this.message = 'Are you sure ?'
+      this.bsModalRef = this.modalService.show(template);
+      this.bookId = book.id;
+
+    }
 
   }
 
   borrowBook(book: Book, template: TemplateRef<any>) {
 
-
     this.title = book.title;
     this.author = book.author;
     this.message = 'Please confirm!'
-    this.startBorrowDate = new Date(new Date().setDate(new Date().getDate() + 1));
+    this.startBorrowDate = new Date(new Date().setTime(new Date().getTime() + (1000 * 60 * 60 * 24)));
     this.endBorrowDate = new Date();
 
     //Check if startDate is a working day. if not, the first working day will be set as startdate
     if (this.startBorrowDate.getDay() == 0)
-      this.startBorrowDate.setDate(this.startBorrowDate.getDate() + 1)
+      this.startBorrowDate.setTime(new Date(this.startBorrowDate).getTime() + (1000 * 60 * 60 * 24))
 
     if (this.startBorrowDate.getDay() == 6)
-      this.startBorrowDate.setDate(this.startBorrowDate.getDate() + 2)
+      this.startBorrowDate.setTime(new Date(this.startBorrowDate).getTime() + (1000 * 60 * 60 * 48))
 
     //Check if endDate is a working day. if not, the first working day will be set as startdate
-    this.endBorrowDate.setDate(new Date().getDate() + 14);
+    this.endBorrowDate.setTime(new Date().setTime(new Date().getTime() + (1000 * 60 * 60 * 24 * 14)));
 
     if (this.endBorrowDate.getDay() == 0)
-      this.endBorrowDate.setDate(this.endBorrowDate.getDate() + 1)
+      this.endBorrowDate.setTime(new Date(this.endBorrowDate).getTime() + (1000 * 60 * 60 * 24))
 
     if (this.endBorrowDate.getDay() == 6)
-      this.endBorrowDate.setDate(this.endBorrowDate.getDate() + 2)
+      this.endBorrowDate.setTime(new Date(this.endBorrowDate).getTime() + (1000 * 60 * 60 * 48))
 
     this.bsModalRef = this.modalService.show(template);
     this.bookId = book.id;
@@ -221,6 +245,7 @@ export class BookCardComponent implements OnInit {
       error: (error) => this.toastr.error(error.error)
 
     })
+
     this.borrowService.userHasBorrowedBooks = true;
 
     this.newBorrow.emit(true);
@@ -235,36 +260,84 @@ export class BookCardComponent implements OnInit {
     this.startReservationDate = new Date();
     this.endReservationDate = new Date();
 
-    this.reserveService.checkReservation(book.id).subscribe({
+    if (book.bookReservations.length != 0) {
 
-      next: (reservations) => {
+      this.reservationsCount = book.bookReservations.length;
 
-        if (reservations.length != 0) {
+      var reservationsOrderByDate = book.bookReservations.sort((a, b) => {
 
-          this.reservationsCount = reservations.length;
-          this.startReservationDate!.setDate(new Date(reservations.at(0)!.endDate).getDate() + 1)
+        if (a.endDate > b.endDate)
+          return 1
+        else
+          return -1
 
-        }
+      })
 
-      },
+      this.startReservationDate.setTime(new Date(reservationsOrderByDate.at(0)!.endDate).getTime() + (1000 * 60 * 60 * 24))
 
-      complete: () => {
+    }
+    else {
 
-        if (this.startReservationDate!.getDay() == 0)
-          this.startReservationDate!.setDate(this.startReservationDate!.getDate() + 1)
+      if (book.bookBorrows.length != 0) {
 
-        if (this.startReservationDate!.getDay() == 6)
-          this.startReservationDate!.setDate(this.startReservationDate!.getDate() + 2)
+        var activeBorrow = book.bookBorrows.filter(b => b.returnDate == null);
 
-        this.endReservationDate!.setDate(this.startReservationDate!.getDate() + 7);
+        this.startReservationDate.setTime(new Date(activeBorrow.at(0)!.endDate).getTime() + (1000 * 60 * 60 * 24))
 
-        this.bsModalRef = this.modalService.show(template);
+      }
+      else {
 
-        this.bookId = book.id;
+        this.startReservationDate!.setTime(new Date().getTime() + (1000 * 60 * 60 * 24))
 
       }
 
-    })
+    }
+
+    if (this.startReservationDate!.getDay() == 0)
+      this.startReservationDate!.setTime(new Date(this.startReservationDate!).getTime() + (1000 * 60 * 60 * 24))
+
+    if (this.startReservationDate!.getDay() == 6)
+      this.startReservationDate!.setTime(new Date(this.startReservationDate!).getTime() + (1000 * 60 * 60 * 48))
+
+    this.endReservationDate!.setTime(new Date(this.startReservationDate!).getTime() + (1000 * 60 * 60 * 24 * 7));
+
+    this.bsModalRef = this.modalService.show(template);
+
+    this.bookId = book.id;
+
+
+    // this.reserveService.checkReservation(book.id).subscribe({
+
+    //   next: (reservations) => {
+
+    //     if (reservations.length != 0) {
+
+    //       this.reservationsCount = reservations.length;
+    //       //this.startReservationDate!.setDate(new Date(reservations.at(0)!.endDate).getDate() + 1)
+
+    //     }
+
+    //   },
+
+    //   complete: () => {
+
+
+
+    //     if (this.startReservationDate!.getDay() == 0)
+    //       this.startReservationDate!.setDate(this.startReservationDate!.getDate() + 1)
+
+    //     if (this.startReservationDate!.getDay() == 6)
+    //       this.startReservationDate!.setDate(this.startReservationDate!.getDate() + 2)
+
+    //     this.endReservationDate!.setDate(this.startReservationDate!.getDate() + 7);
+
+    //     this.bsModalRef = this.modalService.show(template);
+
+    //     this.bookId = book.id;
+
+    //   }
+
+    // })
 
   }
 

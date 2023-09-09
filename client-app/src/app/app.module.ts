@@ -24,6 +24,7 @@ import { BookCardComponent } from './books/book-card/book-card.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { EditComponent } from './user/edit/edit.component';
+import { BsDatepickerModule, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
   declarations: [
@@ -62,9 +63,10 @@ import { EditComponent } from './user/edit/edit.component';
     NgxSpinnerModule.forRoot({
       type: 'timer'
     }),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    BsDatepickerModule.forRoot()
   ],
-  providers: [],
+  providers: [BsDatepickerConfig],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

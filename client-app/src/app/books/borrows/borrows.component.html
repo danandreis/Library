@@ -2,6 +2,31 @@
     <h2 class="col-md-12 text-center text-info fw-bold">
         Borrowed books list
     </h2>
+    <ngx-spinner type="timer" style="color:#fff">Loading...</ngx-spinner>
+    <div class="row">
+        <div class="col-md-10 offset-1 border border-success">
+            <div class="input-group mb-3 mt-3">
+                <div *ngIf="user!.role !='User'" class="form-floating me-3">
+                    <input type="text" class="form-control" id="user-" (keyup)="searchByUserName($event)" />
+                    <label for="user">User</label>
+                </div>
+                <div class="form-floating me-3">
+                    <input type="text" class="form-control" id="startDate" bsDatepicker [daysDisabled]="[0,6]"
+                        [bsConfig]="{containerClass:'theme-dark-blue'}" (bsValueChange)="searchByStartDate($event)" />
+                    <label for="startDate">Start Date</label>
+                </div>
+                <div class="form-floating me-3">
+                    <input type="text" class="form-control" id="endDate" bsDatepicker [daysDisabled]="[0,6]"
+                        [bsConfig]="{containerClass:'theme-dark-blue'}" (bsValueChange)="searchByEndDate($event)" />
+                    <label for="endDate">End Date</label>
+                </div>
+                <div class="form-check" style="align-self:center;">
+                    <input type="checkbox" class="form-check-input" id="return" (change)="searchByStatus($event)" />
+                    <label for="return" class="form-check-label">Returned</label>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-md-12">
         <table class="table mt-5 border">
             <tr>
@@ -35,13 +60,14 @@
                     {{borrowedbook.returnDate | date: 'dd.MM.YYYY'}}
                 </td>
                 <td class="text-center">
-                    <input *ngIf="user!.role == 'User' && borrowedbook.extended !=1" class="btn btn-outline-success"
-                        type="submit" value="Extend borrow" (click)="extend(borrowedbook,extensionNotification)" />
+                    <input *ngIf="user!.role == 'User' && borrowedbook.extended !=1 && borrowedbook.returnDate == null"
+                        class="btn btn-outline-success" type="submit" value="Extend borrow"
+                        (click)="extend(borrowedbook,extensionNotification)" />
                     <input *ngIf="user!.role == 'Employee' && borrowedbook.returnDate == null"
                         class=" btn btn-outline-success" type="submit" value="Return book"
                         (click)="returnBook(borrowedbook)" />
-                    <div *ngIf="user!.role == 'Employee' && borrowedbook.returnDate != null" class="fw-bold"
-                        style="color:green">
+                    <div *ngIf="(user!.role == 'Employee' || user!.role =='User') && borrowedbook.returnDate != null"
+                        class="fw-bold" style="color:green">
                         Returned
                     </div>
                 </td>

@@ -47,22 +47,27 @@
         <input *ngIf="user?.role == 'Employee'" class="btn btn-outline-info me-5 ms-5" type="submit" value="Edit book"
             (click)="editBook(book?.id!)">
 
-        <input *ngIf="user?.role == 'User' && book!.bookBorrows[0] == null && !book!.isReservedByUser"
+        <input
+            *ngIf="user?.role == 'User' && !book!.isBorrowedByOther && !book!.isBorrowedByUser && !book!.isReservedByUser && !book!.isReservedByOther"
             class="btn btn-outline-success me-5 ms-5" type="submit" value="Borrow"
             (click)="borrowBook(book!, borrowNotification)" />
 
         <input *ngIf="book!.isBorrowedByUser" class="btn btn-danger me-3" type="text" style="background-color:darkred"
-            disabled value="You borrowed this book!" />
+            disabled value="Borrowed by you!" />
 
         <input *ngIf="book!.isBorrowedByOther" class="btn btn-danger me-3" type="text" disabled
-            style="background-color:darkred" value="This book is borrowed!" />
+            style="background-color:darkred" value="Borrowed by other!" />
 
         <input *ngIf="book!.isReservedByUser" class="btn btn-succes me-3" type="text"
-            style="background-color:darkgreen;color: white;" disabled value="You reserved this book!" />
+            style="background-color:darkgreen;color: white;" disabled value="Reserved by you!" />
 
-        <input *ngIf="user?.role == 'User' && (book!.isBorrowedByOther || (!book!.isBorrowedByOther && 
-            !book!.isBorrowedByUser && !book!.isReservedByUser))" class="btn btn-outline-secondary me-5" type="submit"
-            value="Reserve" (click)="reserveBook(book!,reserveNotification)">
+        <input *ngIf="book!.isReservedByOther" class="btn btn-succes me-3" type="text"
+            style="background-color:darkgreen;color: white;" disabled value="Reserved by other!" />
+
+        <input
+            *ngIf="user?.role == 'User' && (!book!.isReservedByUser  && (book!.isBorrowedByOther || !book!.isBorrowedByUser))"
+            class="btn btn-outline-secondary me-5" type="submit" value="Reserve"
+            (click)="reserveBook(book!,reserveNotification)">
 
         <input *ngIf="user?.role == 'Employee'" class="btn btn-outline-danger" type="submit" value="Delete"
             (click)="deleteBook(book!,deleteConfirmation)">
