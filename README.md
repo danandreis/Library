@@ -1,5 +1,8 @@
 The application manage the borrows and reservation process for a Library.
 
+Username: *admin*
+Password: *Password_1234*
+
 There are 3 types of users:
   * Admin - who add/edit user data, block/unblock users and change passwords
   * Employee - who add/edit/delete books, see the reservations and borrowed books
